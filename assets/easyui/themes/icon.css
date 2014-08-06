@@ -121,3 +121,15 @@
 .icon-packing{
 	background:url('icons/packing.png') no-repeat center center;
 }
+.icon-money{
+	background:url('icons/money.png') no-repeat center center;
+}
+.icon-invoices{
+	background:url('icons/invoices.png') no-repeat center center;
+}
+.icon-new_file{
+	background:url('icons/new_file.png') no-repeat center center;
+}
+.icon-download{
+	background:url('icons/download.png') no-repeat center center;
+}

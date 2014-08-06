@@ -1,8 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class M_pickinglist extends CI_Model
+class M_invoice extends CI_Model
 {    
-    static $table = 'wmsordertrans';
+    static $table = 'vendinvoicetrans';
      
     public function __construct() {
         parent::__construct();
@@ -142,5 +142,5 @@ class M_pickinglist extends CI_Model
     
 }
 
-/* End of file m_pickinglist.php */
-/* Location: ./application/models/master/m_pickinglist.php */
+/* End of file m_invoice.php */
+/* Location: ./application/models/master/m_invoice.php */

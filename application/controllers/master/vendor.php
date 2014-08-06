@@ -1,10 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Pickinglist extends CI_Controller {
+class Vendor extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('master/m_pickinglist','record');
+        $this->load->model('master/m_vendor','record');
     }
     
     function index()
@@ -16,7 +16,7 @@ class Pickinglist extends CI_Controller {
         if (isset($_GET['grid'])) 
             echo $this->record->index();        
          else 
-            $this->load->view('master/v_pickinglist');        
+            $this->load->view('master/v_vendor');        
     } 
     
     function create()
@@ -52,28 +52,8 @@ class Pickinglist extends CI_Controller {
         else
             echo json_encode(array('msg'=>'Gagal menghapus data'));
     }
-    
-    function update2()
-    {
-        if(!isset($_POST))	
-            show_404();
-        
-        $id = intval(addslashes($_POST['id']));
-        $actual_qty = addslashes($_POST['actual_qty']);
-        $box        = addslashes($_POST['box']);
-        $urgent     = addslashes($_POST['urgent']);
-        $no_stock   = addslashes($_POST['no_stock']);
-        $picked   = addslashes($_POST['picked']);
-        $close      = addslashes($_POST['close']);
-        
-        if($this->record->update2($id))
-            echo json_encode(array('success'=>true));
-        else
-            echo json_encode(array('msg'=>'Gagal menghapus data'));
-    }
-    
-            
+                
 }
 
-/* End of file pickinglist.php */
-/* Location: ./application/controllers/master/pickinglist.php */
+/* End of file vendor.php */
+/* Location: ./application/controllers/master/vendor.php */

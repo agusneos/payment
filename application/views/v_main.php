@@ -3,8 +3,8 @@
 <html>
 <head>   
     <meta charset="UTF-8">
-    <title>Aplikasi Persiapan Barang</title>
-    <link rel="icon" type="image/png" href="<?=base_url('assets/easyui/themes/icons/box.png')?>">
+    <title>Aplikasi Pemantauan Pembayaran</title>
+    <link rel="icon" type="image/png" href="<?=base_url('assets/easyui/themes/icons/money.png')?>">
     <link rel="stylesheet" type="text/css" href="<?=base_url('assets/easyui/themes/default/easyui.css')?>">
     <link rel="stylesheet" type="text/css" href="<?=base_url('assets/easyui/themes/icon.css')?>">
     <script type="text/javascript" src="<?=base_url('assets/easyui/jquery.min.js')?>"></script>
@@ -168,7 +168,7 @@
         </div> 
         <!-- bottom -->
         <div data-options="region:'south',split:false" style="height:100px;">
-            <h1 align="center">Aplikasi Persiapan Barang Ver. 1.0</h1>
+            <h1 align="center">Aplikasi Pemantauan Pembayaran Ver. 1.0</h1>
             <center>©2014 PT. Sagateknindo Sejati. All Rights Reserved.</center>
         </div>
         
