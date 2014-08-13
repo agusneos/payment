@@ -6,11 +6,19 @@
 <table id="grid-master_invoice"
     data-options="pageSize:50, rownumbers:true, singleSelect:true, fit:true, fitColumns:false, toolbar:toolbar_master_invoice">
     <thead>
-        <tr>              
-            <th data-options="field:'Id'"                   width="100" align="center" sortable="true">Kode Vendor</th>
-            <th data-options="field:'VendorId'"             width="300" halign="center" align="left" sortable="true">Nama Vendor</th>
-            <th data-options="field:'InvoiceId'"            width="100" align="center" sortable="true" formatter="payterm">Payment Term</th>            
-            <th data-options="field:'InvoiceId'"            width="100" align="center" sortable="true" formatter="payterm">Payment Term</th>
+        <tr>           
+            <th data-options="field:'VendorId'"             width="80"  align="center" sortable="true">Vendor</th>
+            <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
+            <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
+            <th data-options="field:'Currency'"             width="50"  align="center" sortable="true" >Currency</th>
+            <th data-options="field:'Rate'"                 width="50"  align="center" sortable="true" formatter="thousandSep" >Rate</th>
+            <th data-options="field:'ItemId'"               width="80"  align="center" sortable="true" >Item</th>
+            <th data-options="field:'Name'"                 width="200" align="left"   sortable="true" halign="center" >Item Name</th>
+            <th data-options="field:'PurchUnit'"            width="50"  align="center" sortable="true" >Unit</th>
+            <th data-options="field:'Qty'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >Qty</th>
+            <th data-options="field:'Price'"                width="80"  align="center" sortable="true" formatter="thousandSep" >Price</th>
+            <th data-options="field:'Amount'"               width="100" align="center" sortable="true" formatter="thousandSep" >Amount</th>
+            <th data-options="field:'AmountMST'"            width="100" align="center" sortable="true" formatter="thousandSep" >Amount IDR</th>
         </tr>
     </thead>
 </table>
@@ -117,12 +125,10 @@
         }
     }
     
-    function qty(value,row,index) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-    
-    function act(value,row,index) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    function thousandSep(value,row,index) {
+        return value.toString()
+            .replace(".",",")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
     
     function payterm(value,row,index) {
