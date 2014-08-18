@@ -40,6 +40,20 @@ class Invoice extends CI_Controller {
         else
             echo json_encode(array('msg'=>'Gagal mengubah data'));
     }
+    
+    function update2()
+    {
+        if(!isset($_POST))	
+            show_404();
+        
+        $id         = intval(addslashes($_POST['id']));
+        $checkdate  = addslashes($_POST['checkdate']);        
+        
+        if($this->record->update2($id))
+            echo json_encode(array('success'=>true));
+        else
+            echo json_encode(array('msg'=>'Gagal menghapus data'));
+    }
         
     function delete()
     {

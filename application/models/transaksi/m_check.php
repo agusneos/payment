@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class M_invoice extends CI_Model
+class M_check extends CI_Model
 {    
     static $table = 'vendinvoicetrans';
      
@@ -49,11 +49,13 @@ class M_invoice extends CI_Model
             }
 	}
         
-        $this->db->where($cond, NULL, FALSE);
+        $this->db->where($cond, NULL, FALSE)
+                    ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
-        $this->db->where($cond, NULL, FALSE);
+        $this->db->where($cond, NULL, FALSE)
+                    ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -66,7 +68,8 @@ class M_invoice extends CI_Model
         
         $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(0) AS Price, 
                             SUM(Amount) AS Amount, SUM(AmountMST) AS AmountMST');
-        $this->db->where($cond, NULL, FALSE);         
+        $this->db->where($cond, NULL, FALSE)
+                    ->where('CheckDate', '0000-00-00 00:00:00');         
         $query2  = $this->db->get(self::$table);
         
         $data2 = array();
@@ -87,24 +90,11 @@ class M_invoice extends CI_Model
     {    
         $this->db->where('Id', $id);
         return $this->db->update(self::$table,array(            
-            'CheckDate' =>$this->input->post('CheckDate',true)
-        ));
-    }
-    
-    function update2($id)
-    {    
-        $this->db->where('Id', $id);
-        return $this->db->update(self::$table,array(            
             'CheckDate' =>$this->input->post('checkdate',true)
         ));
-    }
-    
-    function delete($id)
-    {
-        return $this->db->delete(self::$table, array('id' => $id)); 
-    }
+    }        
     
 }
 
-/* End of file m_invoice.php */
-/* Location: ./application/models/master/m_invoice.php */
+/* End of file m_check.php */
+/* Location: ./application/models/transaksi/m_check.php */

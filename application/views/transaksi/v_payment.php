@@ -3,9 +3,9 @@
 <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
 
 <!-- Data Grid -->
-<table id="grid-master_invoice"
-    data-options="pageSize:50, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
-                showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
+<table id="grid-transaksi_check"
+    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+                showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_transaksi_check">
     <thead>
         <tr>           
             <th data-options="field:'ck',checkbox:true" ></th>
@@ -28,51 +28,31 @@
 
 <script type="text/javascript">
     
-    var toolbar_master_invoice = [{
-        text:'New',
-        iconCls:'icon-new_file',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
-    },{
-        text:'Edit',
-        iconCls:'icon-edit',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
-    },{
-        text:'Delete',
-        iconCls:'icon-cancel',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
-    },{
-        text:'Upload',
-        iconCls:'icon-upload',
+    var toolbar_transaksi_check = [{
+        text:'Check',
+        iconCls:'icon-ok',
         handler:function(){getSelections();}
-    },{
-        text:'Download',
-        iconCls:'icon-download',
-        handler:function(){alert(timestamp());}
-    },{
-        text:'Print',
-        iconCls:'icon-print',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
     },{
         text:'Refresh',
         iconCls:'icon-reload',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
+        handler:function(){$('#grid-transaksi_check').datagrid('reload');}
     }];
     
-    $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
-        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'}).datagrid('enableFilter');
+    $('#grid-transaksi_check').datagrid({view:scrollview,remoteFilter:true,
+        url:'<?php echo site_url('transaksi/check/index'); ?>?grid=true'}).datagrid('enableFilter');
 
     function getSelections(){
-       // var ss = [];
-        var rows = $('#grid-master_invoice').datagrid('getSelections');
+        // var ss = [];
+        var rows = $('#grid-transaksi_check').datagrid('getSelections');
         for(var i=0; i<rows.length; i++){
             var row = rows[i];
             //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
-            $.post('<?php echo site_url('master/invoice/update2'); ?>',
+            $.post('<?php echo site_url('transaksi/check/update'); ?>',
                 {id:row.Id, checkdate:timestamp()},'json');
             //$.messager.alert('Info', row.Id+' '+timestamp());
         }
-       // $.messager.alert('Info', ss.join('<br/>'));
-       $('#grid-master_invoice').datagrid('reload');
+        // $.messager.alert('Info', ss.join('<br/>'));
+        $('#grid-transaksi_check').datagrid('reload');
     }
             
     function thousandSep(value,row,index) {
@@ -87,15 +67,7 @@
             .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
         
-    }
-    
-    function payterm(value,row,index) {
-        if (value == 0){
-            return value;
-        } else {
-            return value +' Hari';
-        }           
-    }
+    }    
     
     function timestamp(){
         var today   = new Date();
@@ -123,5 +95,5 @@
 
 <!-- Dialog Button -->
 
-<!-- End of file v_invoice.php -->
-<!-- Location: ./application/views/master/v_invoice.php -->
+<!-- End of file v_check.php -->
+<!-- Location: ./application/views/transaksi/v_check.php -->

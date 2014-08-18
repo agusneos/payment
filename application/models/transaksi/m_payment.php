@@ -1,17 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class M_nostock extends CI_Model
+class M_payment extends CI_Model
 {    
-    static $table   = 'wmsordertrans';
+    static $table = 'vendinvoicetrans';
      
     public function __construct() {
         parent::__construct();
     }
 
-    public function index()
+    function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 50;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
         $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'id';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
@@ -20,7 +20,6 @@ class M_nostock extends CI_Model
 	$cond = '1=1';
 	if (!empty($filterRules)){
             $filterRules = json_decode($filterRules);
-            //print_r ($filterRules);
             foreach($filterRules as $rule){
                 $rule = get_object_vars($rule);
                 $field = $rule['field'];
@@ -51,12 +50,12 @@ class M_nostock extends CI_Model
 	}
         
         $this->db->where($cond, NULL, FALSE)
-                 ->where('no_stock', 'no stok');
+                    ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
-       
+        
         $this->db->where($cond, NULL, FALSE)
-                 ->where('no_stock', 'no stok');
+                    ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -66,23 +65,37 @@ class M_nostock extends CI_Model
         {
             array_push($data, $row); 
         }
+        
+        $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(0) AS Price, 
+                            SUM(Amount) AS Amount, SUM(AmountMST) AS AmountMST');
+        $this->db->where($cond, NULL, FALSE)
+                    ->where('CheckDate', '0000-00-00 00:00:00');         
+        $query2  = $this->db->get(self::$table);
+        
+        $data2 = array();
+        foreach ( $query2->result() as $row2 )
+        {
+            array_push($data2, $row2); 
+        }   
  
         $result = array();
-	$result["total"] = $total;
-	$result['rows'] = $data;
+	$result['total']    = $total;
+	$result['rows']     = $data;
+        $result['footer']   = $data2;
         
         return json_encode($result);          
-    }   
+    }
     
-    public function update($id)
+    function update($id)
     {    
-        $this->db->where('id', $id);
-        return $this->db->update(self::$table,array(
-            'no_stock'  =>$this->input->post('no_stock',true)
+        $this->db->where('Id', $id);
+        return $this->db->update(self::$table,array(            
+            'PaymentDate' =>$this->input->post('paymentdate',true),
+            'PaymentNumber' =>$this->input->post('paymentnumber',true)
         ));
     }        
     
 }
 
-/* End of file m_nostock.php */
-/* Location: ./application/models/transaksi/m_nostock.php */
+/* End of file m_payment.php */
+/* Location: ./application/models/transaksi/m_payment.php */
