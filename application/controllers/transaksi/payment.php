@@ -22,16 +22,17 @@ class Payment extends CI_Controller {
     function update()
     {
         if(!isset($_POST))	
-            show_404();
+            show_404();        
+        //$id             = intval(addslashes($_POST['id']));
+        $invoiceid          = addslashes($_POST['invoiceid']);
+        $paymentcreatedate  = addslashes($_POST['paymentcreatedate']);
+        $paymentdate        = addslashes($_POST['paymentdate']);    
+        $paymentnumber      = addslashes($_POST['paymentnumber']);
         
-        $id             = intval(addslashes($_POST['id']));
-        $paymentdate    = addslashes($_POST['paymentdate']);    
-        $paymentnumber  = addslashes($_POST['paymentnumber']);
-        
-        if($this->record->update($id))
+        if($this->record->update($invoiceid))
             echo json_encode(array('success'=>true));
         else
-            echo json_encode(array('msg'=>'Gagal menghapus data'));
+            echo json_encode(array('msg'=>'Gagal Update data'));
     }
     
 }

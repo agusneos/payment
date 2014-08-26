@@ -47,16 +47,25 @@ class M_payment extends CI_Model
                     } 
                 }
             }
-	}
+	}        
         
+        $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
+                        SUM(Amount) AS Dpp, SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
+                        SUM(AmountMST)*1.1 AS AmountIdr, MIN(CheckDate) AS CheckDate, PaymentNumber');
         $this->db->where($cond, NULL, FALSE)
-                    ->where('CheckDate', '0000-00-00 00:00:00');
+                 ->where('CheckDate !=', '0000-00-00 00:00:00')
+                 ->where('PaymentNumber', '');
+        $this->db->group_by('InvoiceId');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
+        $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
+                        SUM(Amount) AS Dpp, SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
+                        SUM(AmountMST)*1.1 AS AmountIdr, MIN(CheckDate) AS CheckDate, PaymentNumber');
         $this->db->where($cond, NULL, FALSE)
-                    ->where('CheckDate', '0000-00-00 00:00:00');
-        $this->db->order_by($sort, $order);
+                 ->where('CheckDate !=', '0000-00-00 00:00:00')
+                 ->where('PaymentNumber', '');
+        $this->db->group_by('InvoiceId');
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
                    
@@ -66,10 +75,12 @@ class M_payment extends CI_Model
             array_push($data, $row); 
         }
         
-        $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(0) AS Price, 
-                            SUM(Amount) AS Amount, SUM(AmountMST) AS AmountMST');
-        $this->db->where($cond, NULL, FALSE)
-                    ->where('CheckDate', '0000-00-00 00:00:00');         
+        $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(Amount) AS Dpp, 
+                        SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
+                        SUM(AmountMST)*1.1 AS AmountIdr');
+         $this->db->where($cond, NULL, FALSE)
+                 ->where('CheckDate !=', '0000-00-00 00:00:00')
+                 ->where('PaymentNumber', '');       
         $query2  = $this->db->get(self::$table);
         
         $data2 = array();
@@ -86,12 +97,13 @@ class M_payment extends CI_Model
         return json_encode($result);          
     }
     
-    function update($id)
+    function update($invoiceid)
     {    
-        $this->db->where('Id', $id);
-        return $this->db->update(self::$table,array(            
-            'PaymentDate' =>$this->input->post('paymentdate',true),
-            'PaymentNumber' =>$this->input->post('paymentnumber',true)
+        $this->db->where('InvoiceId', $invoiceid);
+        return $this->db->update(self::$table,array(
+            'PaymentCreateDate'     => $this->input->post('paymentcreatedate',true),
+            'PaymentDate'           => $this->input->post('paymentdate',true),
+            'PaymentNumber'         => $this->input->post('paymentnumber',true)
         ));
     }        
     
