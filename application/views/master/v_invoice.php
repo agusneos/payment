@@ -1,27 +1,20 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
+<script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
 
 <!-- Data Grid -->
 <table id="grid-master_invoice"
-    data-options="pageSize:50, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+    data-options="pageSize:1000, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
                 showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
     <thead>
         <tr>           
             <th data-options="field:'ck',checkbox:true" ></th>
-            <th data-options="field:'VendorId'"             width="80"  align="center" sortable="true">Vendor</th>
+            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
-        <!--    <th data-options="field:'CheckDate'"            width="110" align="center" sortable="true" >Check Date</th> -->
-            <th data-options="field:'Currency'"             width="50"  align="center" sortable="true" >Currency</th>
-            <th data-options="field:'Rate'"                 width="50"  align="center" sortable="true" formatter="thousandSep" >Rate</th>
-            <th data-options="field:'ItemId'"               width="70"  align="center" sortable="true" >Item</th>
-            <th data-options="field:'Name'"                 width="190" align="left"   sortable="true" halign="center" >Item Name</th>
-            <th data-options="field:'PurchUnit'"            width="50"  align="center" sortable="true" >Unit</th>
-            <th data-options="field:'Qty'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >Qty</th>
-            <th data-options="field:'Price'"                width="80"  align="center" sortable="true" formatter="thousandSep" >Price</th>
-            <th data-options="field:'Amount'"               width="100" align="center" sortable="true" formatter="thousandSep" >Amount</th>
-            <th data-options="field:'AmountMST'"            width="100" align="center" sortable="true" formatter="thousandSep" >Amount IDR</th>
+            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
+            <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
         </tr>
     </thead>
 </table>
@@ -31,27 +24,27 @@
     var toolbar_master_invoice = [{
         text:'New',
         iconCls:'icon-new_file',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
+        handler:function(){}
     },{
         text:'Edit',
         iconCls:'icon-edit',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
+        handler:function(){}
     },{
         text:'Delete',
         iconCls:'icon-cancel',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
+        handler:function(){}
     },{
         text:'Upload',
         iconCls:'icon-upload',
-        handler:function(){getSelections();}
+        handler:function(){upload();}
     },{
         text:'Download',
         iconCls:'icon-download',
-        handler:function(){alert(timestamp());}
+        handler:function(){}
     },{
         text:'Print',
         iconCls:'icon-print',
-        handler:function(){$('#grid-master_invoice').datagrid('reload');}
+        handler:function(){}
     },{
         text:'Refresh',
         iconCls:'icon-reload',
@@ -60,33 +53,33 @@
     
     $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
         url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'}).datagrid('enableFilter');
-
-    function getSelections(){
-       // var ss = [];
-        var rows = $('#grid-master_invoice').datagrid('getSelections');
-        for(var i=0; i<rows.length; i++){
-            var row = rows[i];
-            //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
-            $.post('<?php echo site_url('master/invoice/update2'); ?>',
-                {id:row.Id, checkdate:timestamp()},'json');
-            //$.messager.alert('Info', row.Id+' '+timestamp());
-        }
-       // $.messager.alert('Info', ss.join('<br/>'));
-       $('#grid-master_invoice').datagrid('reload');
-    }
             
-    function thousandSep(value,row,index) {
+   function thousandSep(value,row,index)
+    {
         if (value == 0)
         {
             return "";
         }
+        else if (row.CurrencyCode == "IDR")
+        {
+            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
+        }
         else
         {
-            return value.toString()
-            .replace(".",",")
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-        
+            return accounting.formatMoney(value, "$ ", 2, ".", ",");
+        }        
+    }
+    
+    function thousandSepIDR(value,row,index)
+    {
+        if (value == 0)
+        {
+            return "";
+        }        
+        else
+        {
+            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
+        }        
     }
     
     function payterm(value,row,index) {
@@ -114,6 +107,77 @@
 </script>
 
 
+<!-- Dialog Form -->
+<style type="text/css">
+    #fm-upload{
+        margin:0;
+        padding:10px 30px;
+    }
+    .ftitle{
+        font-size:14px;
+        font-weight:bold;
+        padding:5px 0;
+        margin-bottom:10px;
+        border-bottom:1px solid #ccc;
+    }
+    .fitem{
+        margin-bottom:5px;
+    }
+    .fitem label{
+        display:inline-block;
+        width:100px;
+    }
+</style>
+    
+<div id="dlg-upload" class="easyui-dialog" style="width:400px; height:330px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-upload">
+    <form id="fm-upload" method="post" enctype="multipart/form-data" novalidate>       
+        <div class="fitem">
+            <label for="type">File</label>
+            <input type="file" id="path" name="workday_path" class="easyui-validatebox" required="true"/>
+        </div> 
+    </form>
+</div>
+
+<!-- Dialog Button -->
+<div id="dlg_buttons-upload">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="uploadSave()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-upload').dialog('close')">Batal</a>
+</div>
+
+<script type="text/javascript">
+    function upload()
+    {
+        $('#dlg-upload').dialog({modal: true}).dialog('open').dialog('setTitle','Upload File');
+        $('#fm-upload').form('reset');
+        urls = '<?php echo site_url('master/invoice/upload'); ?>/';
+    }
+    
+    function uploadSave()
+    {
+        $('#fm-upload').form('submit',{
+            url: urls,
+            onSubmit: function(){   
+                return $(this).form('validate');
+            },
+            success: function(result){
+                var result = eval('('+result+')');
+                if(result.success)
+                {
+                    $('#dlg-upload').dialog('close');
+                    $('#grid-master_invoice').datagrid('reload');
+                } 
+                else 
+                {
+                    $.messager.show({
+                        title: 'Error',
+                        msg: result.msg
+                    });
+                }
+            }
+        });
+    }
+    
+</script>
         
 <!-- Toolbar -->
 

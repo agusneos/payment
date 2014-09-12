@@ -2,7 +2,8 @@
  
 class M_payment extends CI_Model
 {    
-    static $table = 'vendinvoicetrans';
+    static $table   = 'VendInvoiceJour';
+    static $voucher = 'Voucher';
      
     public function __construct() {
         parent::__construct();
@@ -11,9 +12,9 @@ class M_payment extends CI_Model
     function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 1000;
         $offset = ($page-1)*$rows;      
-        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'id';
+        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
         
         $filterRules = isset($_POST['filterRules']) ? ($_POST['filterRules']) : '';
@@ -49,23 +50,26 @@ class M_payment extends CI_Model
             }
 	}        
         
-        $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
+      /*  $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
                         SUM(Amount) AS Dpp, SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
                         SUM(AmountMST)*1.1 AS AmountIdr, MIN(CheckDate) AS CheckDate, PaymentNumber');
-        $this->db->where($cond, NULL, FALSE)
+        */
+        $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentNumber', '');
-        $this->db->group_by('InvoiceId');
+       // $this->db->group_by('InvoiceId');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
-        $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
+      /*  $this->db->select('VendorId, InvoiceId, InvoiceDate, Currency, Rate, SUM(Qty) AS Qty, 
                         SUM(Amount) AS Dpp, SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
                         SUM(AmountMST)*1.1 AS AmountIdr, MIN(CheckDate) AS CheckDate, PaymentNumber');
+       * 
+       */
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentNumber', '');
-        $this->db->group_by('InvoiceId');
+      //  $this->db->group_by('InvoiceId');
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
                    
@@ -75,9 +79,10 @@ class M_payment extends CI_Model
             array_push($data, $row); 
         }
         
-        $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(Amount) AS Dpp, 
-                        SUM(AmountMST) AS DppIdr, SUM(AmountMST)*0.1 AS PpnIdr, 
-                        SUM(AmountMST)*1.1 AS AmountIdr');
+        $this->db->select('SUM(Qty) AS Qty, SUM(SalesBalance) AS SalesBalance, 
+                        SUM(0) AS InvoiceAmount, SUM(0) AS ExchRate, 
+                        SUM(InvoiceRoundOff) AS InvoiceRoundOff, SUM(SumTax) AS SumTax, 
+                        SUM(InvoiceAmountMST) AS InvoiceAmountMST');
          $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentNumber', '');       
@@ -97,15 +102,26 @@ class M_payment extends CI_Model
         return json_encode($result);          
     }
     
-    function update($invoiceid)
+    function update($InvoiceId)
     {    
-        $this->db->where('InvoiceId', $invoiceid);
+        $this->db->where('InvoiceId', $InvoiceId);
         return $this->db->update(self::$table,array(
-            'PaymentCreateDate'     => $this->input->post('paymentcreatedate',true),
-            'PaymentDate'           => $this->input->post('paymentdate',true),
-            'PaymentNumber'         => $this->input->post('paymentnumber',true)
+            'PaymentCreateDate' => $this->input->post('paymentcreatedate',true),
+            'PaymentDate'       => $this->input->post('paymentdate',true),
+            'PaymentNumber'     => $this->input->post('paymentnumber',true)
         ));
     }        
+    
+    function createVoucher()
+    {
+        return $this->db->insert(self::$voucher,array(
+            'PaymentNumber'     =>  $this->input->post('paymentnumber',true),
+            'PaymentDate'       =>  $this->input->post('paymentdate',true),
+            'InvoiceAmount'     =>  $this->input->post('invoiceamount',true),
+            'InvoiceAmountMST'  =>  $this->input->post('invoiceamountmst',true),
+            'PaymentCreateDate' =>  $this->input->post('paymentcreatedate',true),
+        ));
+    }
     
 }
 

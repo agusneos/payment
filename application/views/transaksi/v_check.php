@@ -1,27 +1,20 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
 <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
+<script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
 
 <!-- Data Grid -->
 <table id="grid-transaksi_check"
-    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+    data-options="pageSize:1000, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
                 showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_transaksi_check">
     <thead>
         <tr>           
             <th data-options="field:'ck',checkbox:true" ></th>
-            <th data-options="field:'VendorId'"             width="80"  align="center" sortable="true">Vendor</th>
+            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
-        <!--    <th data-options="field:'CheckDate'"            width="110" align="center" sortable="true" >Check Date</th> -->
-            <th data-options="field:'Currency'"             width="50"  align="center" sortable="true" >Currency</th>
-            <th data-options="field:'Rate'"                 width="50"  align="center" sortable="true" formatter="thousandSep" >Rate</th>
-            <th data-options="field:'ItemId'"               width="70"  align="center" sortable="true" >Item</th>
-            <th data-options="field:'Name'"                 width="190" align="left"   sortable="true" halign="center" >Item Name</th>
-            <th data-options="field:'PurchUnit'"            width="50"  align="center" sortable="true" >Unit</th>
-            <th data-options="field:'Qty'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >Qty</th>
-            <th data-options="field:'Price'"                width="80"  align="center" sortable="true" formatter="thousandSep" >Price</th>
-            <th data-options="field:'Amount'"               width="100" align="center" sortable="true" formatter="thousandSep" >Amount</th>
-            <th data-options="field:'AmountMST'"            width="100" align="center" sortable="true" formatter="thousandSep" >Amount IDR</th>
+            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
+            <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
         </tr>
     </thead>
 </table>
@@ -44,29 +37,50 @@
     function getSelections(){
         // var ss = [];
         var rows = $('#grid-transaksi_check').datagrid('getSelections');
-        for(var i=0; i<rows.length; i++){
-            var row = rows[i];
-            //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
-            $.post('<?php echo site_url('transaksi/check/update'); ?>',
-                {id:row.Id, checkdate:timestamp()},'json');
-            //$.messager.alert('Info', row.Id+' '+timestamp());
+        if(rows.length>0)
+        {
+            for(var i=0; i<rows.length; i++){
+                var row = rows[i];
+                //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
+                $.post('<?php echo site_url('transaksi/check/update'); ?>',
+                    {InvoiceId:row.InvoiceId, checkdate:timestamp()},'json');
+                //$.messager.alert('Info', row.Id+' '+timestamp());
+            }
+            // $.messager.alert('Info', ss.join('<br/>'));
+            $('#grid-transaksi_check').datagrid('reload');
         }
-        // $.messager.alert('Info', ss.join('<br/>'));
-        $('#grid-transaksi_check').datagrid('reload');
+        else
+        {
+            $.messager.alert('Info','Data Belum Dipilih!','info');
+        }        
     }
             
-    function thousandSep(value,row,index) {
+    function thousandSep(value,row,index)
+    {
         if (value == 0)
         {
             return "";
         }
+        else if (row.CurrencyCode == "IDR")
+        {
+            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
+        }
         else
         {
-            return value.toString()
-            .replace(".",",")
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-        
+            return accounting.formatMoney(value, "$ ", 2, ".", ",");
+        }        
+    }
+    
+    function thousandSepIDR(value,row,index)
+    {
+        if (value == 0)
+        {
+            return "";
+        }        
+        else
+        {
+            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
+        }        
     }    
     
     function timestamp(){

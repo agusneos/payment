@@ -23,13 +23,29 @@ class Payment extends CI_Controller {
     {
         if(!isset($_POST))	
             show_404();        
-        //$id             = intval(addslashes($_POST['id']));
-        $invoiceid          = addslashes($_POST['invoiceid']);
+        $InvoiceId             = intval(addslashes($_POST['InvoiceId']));
+        //$id               = addslashes($_POST['invoiceid']);
         $paymentcreatedate  = addslashes($_POST['paymentcreatedate']);
         $paymentdate        = addslashes($_POST['paymentdate']);    
         $paymentnumber      = addslashes($_POST['paymentnumber']);
         
-        if($this->record->update($invoiceid))
+        if($this->record->update($InvoiceId))
+            echo json_encode(array('success'=>true));
+        else
+            echo json_encode(array('msg'=>'Gagal Update data'));
+    }
+    
+    function createVoucher()
+    {
+        if(!isset($_POST))	
+            show_404();        
+        //$id                 = intval(addslashes($_POST['id']));
+        $paymentnumber      = addslashes($_POST['paymentnumber']);
+        $paymentdate        = addslashes($_POST['paymentdate']);
+        $invoiceamount      = addslashes($_POST['invoiceamount']); 
+        $invoiceamountmst   = addslashes($_POST['invoiceamountmst']); 
+        $paymentcreatedate  = addslashes($_POST['paymentcreatedate']);        
+        if($this->record->createVoucher())
             echo json_encode(array('success'=>true));
         else
             echo json_encode(array('msg'=>'Gagal Update data'));

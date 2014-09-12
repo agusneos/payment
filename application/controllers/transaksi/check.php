@@ -24,10 +24,10 @@ class Check extends CI_Controller {
         if(!isset($_POST))	
             show_404();
         
-        $id         = intval(addslashes($_POST['id']));
+        $InvoiceId  = intval(addslashes($_POST['InvoiceId']));
         $checkdate  = addslashes($_POST['checkdate']);        
         
-        if($this->record->update($id))
+        if($this->record->update($InvoiceId))
             echo json_encode(array('success'=>true));
         else
             echo json_encode(array('msg'=>'Gagal menghapus data'));

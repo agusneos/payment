@@ -2,7 +2,7 @@
  
 class M_invoice extends CI_Model
 {    
-    static $table = 'vendinvoicetrans';
+    static $table = 'VendInvoiceJour';
      
     public function __construct() {
         parent::__construct();
@@ -11,9 +11,9 @@ class M_invoice extends CI_Model
     function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 1000;
         $offset = ($page-1)*$rows;      
-        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'id';
+        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
         
         $filterRules = isset($_POST['filterRules']) ? ($_POST['filterRules']) : '';
@@ -64,8 +64,10 @@ class M_invoice extends CI_Model
             array_push($data, $row); 
         }
         
-        $this->db->select('SUM(0) AS Rate, SUM(Qty) AS Qty, SUM(0) AS Price, 
-                            SUM(Amount) AS Amount, SUM(AmountMST) AS AmountMST');
+        $this->db->select('SUM(Qty) AS Qty, SUM(0) AS SalesBalance, 
+                        SUM(0) AS InvoiceAmount, SUM(0) AS ExchRate, 
+                        SUM(0) AS InvoiceRoundOff, SUM(SumTax) AS SumTax, 
+                        SUM(InvoiceAmountMST) AS InvoiceAmountMST');
         $this->db->where($cond, NULL, FALSE);         
         $query2  = $this->db->get(self::$table);
         
@@ -83,9 +85,9 @@ class M_invoice extends CI_Model
         return json_encode($result);          
     }
     
-    function update($id)
+    function update($InvoiceId)
     {    
-        $this->db->where('Id', $id);
+        $this->db->where('InvoiceId', $InvoiceId);
         return $this->db->update(self::$table,array(            
             'CheckDate' =>$this->input->post('CheckDate',true)
         ));
@@ -93,15 +95,24 @@ class M_invoice extends CI_Model
     
     function update2($id)
     {    
-        $this->db->where('Id', $id);
+        $this->db->where('InvoiceId', $InvoiceId);
         return $this->db->update(self::$table,array(            
             'CheckDate' =>$this->input->post('checkdate',true)
         ));
     }
     
-    function delete($id)
+    function delete($InvoiceId)
     {
-        return $this->db->delete(self::$table, array('id' => $id)); 
+        return $this->db->delete(self::$table, array('InvoiceId' => $InvoiceId)); 
+    }
+    
+    function upload($nama, $kelas, $matkul)
+    {
+        return $this->db->insert('test', array(
+            'nama'  => $nama,
+            'kelas' => $kelas,
+            'matkul'=> $matkul
+        ));
     }
     
 }
