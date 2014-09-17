@@ -14,6 +14,8 @@
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
+            <th data-options="field:'CurrencyCode'"         width="50"  align="center" sortable="true" >Currency</th>
+            <th data-options="field:'ExchRate'"             width="80" align="center" sortable="true" formatter="thousandSepRate" >Rate</th>
             <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
             <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
         </tr>
@@ -63,6 +65,17 @@
         }        
     }
     
+    function thousandSepRate(value,row,index)
+    {
+        if (row.CurrencyCode == "IDR")
+        {
+            return "";
+        }        
+        else
+        {
+            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
+        }        
+    }
     
     
 </script>
@@ -102,6 +115,10 @@
         <div class="fitem">
             <label for="type">Kode Bayar</label>
             <input id="paidno" name="paid_no" class="easyui-validatebox" required="true"/>
+        </div>
+        <div class="fitem">
+            <label for="type">Rate Bayar</label>
+            <input id="rate" name="rate" class="easyui-numberbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Total Amount</label>

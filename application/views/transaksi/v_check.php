@@ -13,6 +13,8 @@
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
+            <th data-options="field:'CurrencyCode'"         width="50"  align="center" sortable="true" >Currency</th>
+            <th data-options="field:'ExchRate'"             width="80" align="center" sortable="true" formatter="thousandSepIDR" >Rate</th>
             <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
             <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
         </tr>
