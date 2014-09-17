@@ -133,7 +133,7 @@
     <form id="fm-upload" method="post" enctype="multipart/form-data" novalidate>       
         <div class="fitem">
             <label for="type">File</label>
-            <input type="file" id="path" name="workday_path" class="easyui-validatebox" required="true"/>
+            <input type="file" id="file" name="file" class="easyui-validatebox" required="true"/>
         </div> 
     </form>
 </div>
@@ -163,8 +163,13 @@
                 var result = eval('('+result+')');
                 if(result.success)
                 {
+                    
                     $('#dlg-upload').dialog('close');
                     $('#grid-master_invoice').datagrid('reload');
+                    $.messager.show({
+                            title: 'Info',
+                            msg: result.total + ' ' +result.ok + ' ' + result.ng
+                            });
                 } 
                 else 
                 {
