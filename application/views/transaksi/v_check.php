@@ -26,7 +26,7 @@
     var toolbar_transaksi_check = [{
         text:'Check',
         iconCls:'icon-ok',
-        handler:function(){getSelections();}
+        handler:function(){check();}
     },{
         text:'Refresh',
         iconCls:'icon-reload',
@@ -36,17 +36,24 @@
     $('#grid-transaksi_check').datagrid({view:scrollview,remoteFilter:true,
         url:'<?php echo site_url('transaksi/check/index'); ?>?grid=true'}).datagrid('enableFilter');
 
-    function getSelections(){
+    function check()    
+    {
         // var ss = [];
         var rows = $('#grid-transaksi_check').datagrid('getSelections');
         if(rows.length>0)
         {
-            for(var i=0; i<rows.length; i++){
+            for(var i=0; i<rows.length; i++)
+            {
                 var row = rows[i];
                 //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
                 $.post('<?php echo site_url('transaksi/check/update'); ?>',
                     {InvoiceId:row.InvoiceId, checkdate:timestamp()},'json');
-                //$.messager.alert('Info', row.Id+' '+timestamp());
+                //$.messager.alert('Info', row.InvoiceId);
+               /* $.messager.show({
+                            title: 'Info',
+                            msg: success
+                            });
+                            */
             }
             // $.messager.alert('Info', ss.join('<br/>'));
             $('#grid-transaksi_check').datagrid('reload');

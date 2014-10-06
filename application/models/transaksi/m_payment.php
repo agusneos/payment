@@ -56,7 +56,8 @@ class M_payment extends CI_Model
         */
         $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 ->where('PaymentNumber', '');
+                 //->where('PaymentNumber', '');
+                 ->where('PaymentSisa !=', 0);
        // $this->db->group_by('InvoiceId');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
@@ -68,7 +69,8 @@ class M_payment extends CI_Model
        */
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 ->where('PaymentNumber', '');
+                 //->where('PaymentNumber', '');
+                 ->where('PaymentSisa !=', 0);
       //  $this->db->group_by('InvoiceId');
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -85,7 +87,8 @@ class M_payment extends CI_Model
                         SUM(InvoiceAmountMST) AS InvoiceAmountMST');
          $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 ->where('PaymentNumber', '');       
+                 //->where('PaymentNumber', '');
+                 ->where('PaymentSisa !=', 0);
         $query2  = $this->db->get(self::$table);
         
         $data2 = array();
@@ -115,14 +118,35 @@ class M_payment extends CI_Model
     function createVoucher()
     {
         return $this->db->insert(self::$voucher,array(
-            'PaymentNumber'     =>  $this->input->post('paymentnumber',true),
-            'PaymentDate'       =>  $this->input->post('paymentdate',true),
-            'InvoiceAmount'     =>  $this->input->post('invoiceamount',true),
-            'InvoiceAmountMST'  =>  $this->input->post('invoiceamountmst',true),
-            'PaymentCreateDate' =>  $this->input->post('paymentcreatedate',true),
+            'OrderAccount'      =>  $this->input->post('OrderAccount',true),
+            'PaymentNumber'     =>  $this->input->post('PaymentNumber',true),
+            'PaymentDate'       =>  $this->input->post('PaymentDate',true),
+            'CurrencyCode'      =>  $this->input->post('CurrencyCode',true),
+            'ExchRate'          =>  $this->input->post('ExchRate',true),
+            'InvoiceAmount'     =>  $this->input->post('InvoiceAmount',true),
+            'InvoiceAmountMST'  =>  $this->input->post('InvoiceAmountMST',true),
+            'PaymentCreateDate' =>  $this->input->post('PaymentCreateDate',true),
         ));
     }
     
+    function createVoucherInvoice()
+    {
+        return $this->db->insert(self::$voucher,array(
+            'OrderAccount'      =>  $this->input->post('OrderAccount',true),
+            'PaymentNumber'     =>  $this->input->post('PaymentNumber',true),
+            'PaymentDate'       =>  $this->input->post('PaymentDate',true),
+            'CurrencyCode'      =>  $this->input->post('CurrencyCode',true),
+            'ExchRate'          =>  $this->input->post('ExchRate',true),
+            'InvoiceAmount'     =>  $this->input->post('InvoiceAmount',true),
+            'InvoiceAmountMST'  =>  $this->input->post('InvoiceAmountMST',true),
+            'PaymentCreateDate' =>  $this->input->post('PaymentCreateDate',true),
+        ));
+    }
+    
+    function bedavendor()
+    {
+        
+    }
 }
 
 /* End of file m_payment.php */

@@ -101,23 +101,20 @@ class M_invoice extends CI_Model
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                     $SalesBalance, $InvoiceAmount, $CurrencyCode, $ExchRate,
                     $InvoiceRoundOff, $TaxGroup, $SumTax, $InvoiceAmountMST)
-    {
-     /*   return $this->db->insert('test', array(
-            'nama'  => $nama,
-            'kelas' => $kelas,
-            'matkul'=> $matkul
-        )); */
-      //  return $this->db->simple_query('INSERT INTO test(nama, kelas, matkul) 
-       //     VALUES ("'.$nama.'","'.$kelas.'","'.$matkul.'")');
-   /*     return $this->db->query('INSERT INTO vendinvoicejour2 
-            VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'","'.$Qty.'","'
-                .$SalesBalance.'","'.$InvoiceAmount.'","'.$CurrencyCode.'","'.$ExchRate.'","'
-                .$InvoiceRoundOff.'","'.$TaxGroup.'","'.$SumTax.'","'.$InvoiceAmountMST.'")'); */
-        return $this->db->simple_query('INSERT INTO vendinvoicejour 
+    {     
+    /*    return $this->db->simple_query('INSERT INTO vendinvoicejour 
             VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
                 .$SalesBalance.','.$InvoiceAmount.',"'.$CurrencyCode.'",'.$ExchRate.','
                 .$InvoiceRoundOff.',"'.$TaxGroup.'",'.$SumTax.','.$InvoiceAmountMST.',
                 "0000-00-00 00:00:00", "0000-00-00", "", "0000-00-00 00:00:00")');
+     * 
+     */
+        
+        return $this->db->simple_query('INSERT INTO vendinvoicejour 
+            VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
+                .$SalesBalance.','.$InvoiceAmount.',"'.$CurrencyCode.'",'.$ExchRate.','
+                .$InvoiceRoundOff.',"'.$TaxGroup.'",'.$SumTax.','.$InvoiceAmountMST.',
+                "0000-00-00 00:00:00", '.$InvoiceAmount.')');
     }
     
 }

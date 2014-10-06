@@ -29,7 +29,7 @@
         setTimeout(function(){
             $.messager.progress('close');
              window.location.assign('<?php echo site_url("")//redirect ke index; ?>');
-        },2000)           
+        },1000)           
     }
     
     $('#username').keypress(function(e)  {

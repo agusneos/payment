@@ -52,7 +52,7 @@
     }];
     
     $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
-        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'}).datagrid('enableFilter');
+        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'});
             
    function thousandSep(value,row,index)
     {

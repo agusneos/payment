@@ -106,7 +106,7 @@
 </style>
     
 <div id="dlg-paid" class="easyui-dialog" style="width:400px; height:330px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-paid">
-    <form id="fm-paid" method="post" validate>       
+    <form id="fm-paid" method="post" novalidate>       
         <div class="fitem">
             <label for="type">Tanggal Bayar</label>
             <input id="paiddate" name="paid_date" class="easyui-datebox" required="true" data-options="
@@ -119,6 +119,10 @@
         <div class="fitem">
             <label for="type">Rate Bayar</label>
             <input id="rate" name="rate" class="easyui-numberbox" required="true"/>
+        </div>
+        <div class="fitem">
+            <label for="type">Mata Uang</label>
+            <input id="cur" name="cur" class="easyui-validatebox" disabled="true"/>
         </div>
         <div class="fitem">
             <label for="type">Total Amount</label>
@@ -145,33 +149,53 @@
     {     
         var rows = $('#grid-transaksi_payment').datagrid('getSelections');
         if(rows.length>0)
-        {
+        {            
             $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
             $('#fm-paid').form('reset');
             var InvoiceAmountMST    = 0;
             var InvoiceAmount       = 0;
+
             for(var i=0; i<rows.length; i++)            
             {
                 var row = rows[i];
                 InvoiceAmountMST    = eval(InvoiceAmountMST)+eval(row.InvoiceAmountMST);
                 InvoiceAmount       = eval(InvoiceAmount)+eval(row.InvoiceAmount);
-            }           
+            }
+            $('#cur').val(row.CurrencyCode);
             $('#InvoiceAmountMST').numberbox('setValue',InvoiceAmountMST);
             $('#InvoiceAmount').numberbox('setValue',InvoiceAmount);
+            
+            if ($('#cur').val() == "IDR")
+            {
+                //$('#rate').numberbox('destroy');
+                $('#rate').numberbox('setValue',1);
+                $('#rate').numberbox('disable');
+                $('#rate').numberbox({required: false});
+                $('#InvoiceAmount').numberbox({disabled: true});
+            }
+            else
+            {
+                $('#rate').numberbox('setValue','');
+                $('#rate').numberbox('enable');
+                $('#rate').numberbox({required: true});
+                $('#InvoiceAmount').numberbox({disabled: false});
+            }
         }
         else
         {
-            $.messager.alert('Info','Data Belum Dipilih!','info');
+            $.messager.alert('Peringatan','Data Belum Dipilih !','warning');
         }
     }
     
-    function dateboxFormatter(date){
+    function dateboxFormatter(date)
+    {
         var y = date.getFullYear();
         var m = date.getMonth()+1;
         var d = date.getDate();
         return y+'-'+(m<10?('0'+m):m)+'-'+(d<10?('0'+d):d);
     }
-    function dateboxParser(s){
+    function dateboxParser(s)
+    {
         if (!s) return new Date();
         var ss = (s.split('-'));
         var y = parseInt(ss[0],10);
@@ -185,22 +209,12 @@
     }
     
     function paidSave()
-    {
-        var paid_date  = $('#paiddate').datebox('getValue');
-        var paid_no    = $('#paidno').val();
-        
-        if (paid_date == '')
-        {
-            $.messager.alert('Info','Tanggal Pembayaran Belum Diisi','info');
-        }
-        else if (paid_no == '')
-        {
-            $.messager.alert('Info','Kode Pembayaran Belum Diisi','info');
-        }
-        else
+    {       
+        var validate    = $('#fm-paid').form('validate');        
+        if (validate)
         {
             getSelections();
-        }
+        }      
     }    
     
     function getSelections()
@@ -210,19 +224,38 @@
         var amount      = $('#InvoiceAmount').numberbox('getValue');
         var amountmst   = $('#InvoiceAmountMST').numberbox('getValue');
         var rows        = $('#grid-transaksi_payment').datagrid('getSelections');
-       // var total       = 0;
+        var cur         = $('#cur').val();
+        var rate        = $('#rate').numberbox('getValue');
+        
         for(var i=0; i<rows.length; i++)            
         {
             var row = rows[i];
-            //total = eval(total)+eval(row.InvoiceAmountMST);
+
             $.post('<?php echo site_url('transaksi/payment/update'); ?>',
-                {InvoiceId:row.InvoiceId, paymentcreatedate:timestamp(), 
-                paymentdate:paid_date, paymentnumber:paid_no},'json');
+                {InvoiceId          : row.InvoiceId,
+                InvoiceAmount       : row.InvoiceAmount},'json');
+            
+            $.post('<?php echo site_url('transaksi/payment/createVoucherInvoice'); ?>',
+                {OrderAccount       : row.OrderAccount,
+                PaymentNumber       : row.InvoiceId,
+                PaymentDate         : row.InvoiceDate,
+                CurrencyCode        : row.CurrencyCode,
+                ExchRate            : row.ExchRate,
+                InvoiceAmount       : row.InvoiceAmount,
+                InvoiceAmountMST    : row.InvoiceAmountMST,
+                PaymentCreateDate   : timestamp()},'json');
         }
         $.post('<?php echo site_url('transaksi/payment/createVoucher'); ?>',
-                {paymentnumber:paid_no, paymentdate:paid_date, invoiceamount:amount,
-                invoiceamountmst:amountmst, paymentcreatedate:timestamp()},'json');
-       // alert(amount);
+                {OrderAccount       : row.OrderAccount,
+                PaymentNumber       : paid_no,
+                PaymentDate         : paid_date,
+                CurrencyCode        : cur,
+                ExchRate            : rate,
+                InvoiceAmount       : amount * -1,
+                //InvoiceAmountMST    : amountmst * -1,
+                InvoiceAmountMST    : rate * amount * -1,
+                PaymentCreateDate   : timestamp()},'json');
+
         $('#dlg-paid').dialog('close');
         $('#grid-transaksi_payment').datagrid('reload');
     }

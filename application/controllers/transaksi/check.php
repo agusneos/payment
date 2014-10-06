@@ -24,7 +24,7 @@ class Check extends CI_Controller {
         if(!isset($_POST))	
             show_404();
         
-        $InvoiceId  = intval(addslashes($_POST['InvoiceId']));
+        $InvoiceId  = addslashes($_POST['InvoiceId']);
         $checkdate  = addslashes($_POST['checkdate']);        
         
         if($this->record->update($InvoiceId))
