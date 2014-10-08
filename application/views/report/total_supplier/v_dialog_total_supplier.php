@@ -46,16 +46,13 @@
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
+            <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
+        </div>
+    <!--    <div class="fitem">
+            <label for="type">Tahun</label>
             <input id="tahun" name="tahun" class="easyui-numberbox" style="width:100px;" required/>
         </div>
-        <div class="fitem">
-            <label for="type">Group</label>
-            <select id="group" name="group" class="easyui-combobox" style="width:100px;" required>
-                <option value=""></option>
-                <option value="LOKAL">LOKAL</option>
-                <option value="IMPORT">IMPORT</option>
-            </select>
-        </div>
+    -->
     </form>
 
 <!-- Dialog Button -->
@@ -68,17 +65,12 @@
     function cetak_total_supplier()
     {
         var isValid = $('#fm-dialog_total_supplier').form('validate');
-        if (!isValid)
-        {
-           // var bulan   = $('#bulan').combobox('getValue');
-           // var tahun   = $('#tahun').numberbox('getValue');
-           // var group   = $('#group').combobox('getValue');
+        if (isValid)
+        {         
+            var bulan   = $('#bulan').combobox('getValue');
+            var tahun   = $('#tahun').numberbox('getValue');            
+            var periode = bulan+'-'+tahun;
             
-            var bulan   = eval(8);
-            var tahun   = eval(2014);
-            var group   = 'IMPORT';
-            
-            var periode = group+'-'+bulan+'-'+tahun;
             var url = '<?php echo site_url('report/total_supplier/cetak_total_supplier'); ?>/' + periode;
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
             var title = 'Periode ' + periode;

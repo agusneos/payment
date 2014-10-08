@@ -12,10 +12,8 @@ class M_total_supplier extends CI_Model
     function cetak_total_supplier($id)
     {
         $pecah      = explode('-', $id);
-       // $group      = $pecah[0];
-        $group      = 'LOKAL';
-        $bulan      = $pecah[1];
-        $tahun      = $pecah[2];
+        $bulan      = $pecah[0];
+        $tahun      = $pecah[1];
         
         $sql        = 'SELECT Vendor.Name,
                        Vendor.VendGroup,
@@ -28,8 +26,7 @@ class M_total_supplier extends CI_Model
                        LEFT JOIN Vendor
                        ON VendInvoiceJour.OrderAccount = Vendor.Id
                        
-                       WHERE Vendor.VendGroup = "'.$group.'" AND
-                             MONTH(VendInvoiceJour.InvoiceDate) = '.$bulan.' AND
+                       WHERE MONTH(VendInvoiceJour.InvoiceDate) = '.$bulan.' AND
                              YEAR(VendInvoiceJour.InvoiceDate) = '.$tahun.'
                                  
                        GROUP BY VendInvoiceJour.OrderAccount,
