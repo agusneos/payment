@@ -49,11 +49,20 @@ foreach($rows->result() as $data)
     
 }
 
+$tanggal = isset($data->InvoiceDate);
 $height = 0.5;
 $pdf->SetFont('Arial','',16);
 $pdf->Cell(0,$height*1.5,'PEMBELIAN BARANG & JASA',0,0,'C');
 $pdf->Ln($height*1.5);
-$pdf->Cell(0,$height*1.5,  format_date($data->InvoiceDate),0,0,'C');
+
+if ($tanggal)
+{
+    $pdf->Cell(0,$height*1.5, format_date($data->InvoiceDate),0,0,'C');
+}
+else
+{
+    $pdf->Error('Data Tidak Ditemukan.');
+}
 $pdf->Ln($height*2);
 
 // START LOKAL //
@@ -102,8 +111,7 @@ foreach($rows->result() as $data)
             $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*0.1), 0, ',', '.'),'TB',0,'R');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
             $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*1.1), 0, ',', '.'),'TRB',0,'R');
-        }
-        
+        }       
         
         $noUrut++;
         $SumSalesBalance    += $data->SalesBalance;
@@ -173,8 +181,7 @@ foreach($rows->result() as $data)
             $pdf->Cell(2.5,$height,'','TB',0,'R');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
             $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.'),'TRB',0,'R');
-        }
-        
+        }        
         
         $noUrutImport++;
         $SumSalesBalanceImport    += $data->SalesBalance;

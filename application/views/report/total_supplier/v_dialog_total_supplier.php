@@ -48,11 +48,6 @@
             <label for="type">Tahun</label>
             <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
         </div>
-    <!--    <div class="fitem">
-            <label for="type">Tahun</label>
-            <input id="tahun" name="tahun" class="easyui-numberbox" style="width:100px;" required/>
-        </div>
-    -->
     </form>
 
 <!-- Dialog Button -->
