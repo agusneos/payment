@@ -3,6 +3,7 @@
 class M_invoice extends CI_Model
 {    
     static $table = 'VendInvoiceJour';
+    static $vendor = 'Vendor';
      
     public function __construct() {
         parent::__construct();
@@ -11,7 +12,7 @@ class M_invoice extends CI_Model
     function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 1000;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
         $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
@@ -49,11 +50,19 @@ class M_invoice extends CI_Model
             }
 	}
         
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, 
+                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
+                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
+        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
-        
+
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode,
+                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
+                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
+        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -63,24 +72,10 @@ class M_invoice extends CI_Model
         {
             array_push($data, $row); 
         }
-        
-        $this->db->select('SUM(Qty) AS Qty, SUM(0) AS SalesBalance, 
-                        SUM(0) AS InvoiceAmount, SUM(0) AS ExchRate, 
-                        SUM(0) AS InvoiceRoundOff, SUM(SumTax) AS SumTax, 
-                        SUM(InvoiceAmountMST) AS InvoiceAmountMST');
-        $this->db->where($cond, NULL, FALSE);         
-        $query2  = $this->db->get(self::$table);
-        
-        $data2 = array();
-        foreach ( $query2->result() as $row2 )
-        {
-            array_push($data2, $row2); 
-        }   
- 
+
         $result = array();
 	$result['total']    = $total;
 	$result['rows']     = $data;
-        $result['footer']   = $data2;
         
         return json_encode($result);          
     }
@@ -99,22 +94,25 @@ class M_invoice extends CI_Model
     }
     
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
-                    $SalesBalance, $InvoiceAmount, $CurrencyCode, $ExchRate,
-                    $InvoiceRoundOff, $TaxGroup, $SumTax, $InvoiceAmountMST)
+                    $SalesBalance, $CurrencyCode, $ExchRate)
     {     
     /*    return $this->db->simple_query('INSERT INTO vendinvoicejour 
             VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
                 .$SalesBalance.','.$InvoiceAmount.',"'.$CurrencyCode.'",'.$ExchRate.','
                 .$InvoiceRoundOff.',"'.$TaxGroup.'",'.$SumTax.','.$InvoiceAmountMST.',
                 "0000-00-00 00:00:00", "0000-00-00", "", "0000-00-00 00:00:00")');
+     * return $this->db->simple_query('INSERT INTO vendinvoicejour 
+            VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
+                .$SalesBalance.','.$InvoiceAmount.',"'.$CurrencyCode.'",'.$ExchRate.','
+                .$InvoiceRoundOff.',"'.$TaxGroup.'",'.$SumTax.','.$InvoiceAmountMST.',
+                "0000-00-00 00:00:00", '.$InvoiceAmount.')');
      * 
      */
         
         return $this->db->simple_query('INSERT INTO vendinvoicejour 
             VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
-                .$SalesBalance.','.$InvoiceAmount.',"'.$CurrencyCode.'",'.$ExchRate.','
-                .$InvoiceRoundOff.',"'.$TaxGroup.'",'.$SumTax.','.$InvoiceAmountMST.',
-                "0000-00-00 00:00:00", '.$InvoiceAmount.')');
+                .$SalesBalance.',"'.$CurrencyCode.'",'.$ExchRate.',
+                "0000-00-00 00:00:00", '.$SalesBalance.')');
     }
     
 }

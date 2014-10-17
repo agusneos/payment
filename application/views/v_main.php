@@ -141,9 +141,9 @@
         <!-- Top -->
         <div data-options="region:'north',border:true,split:false" style="height:34px;height:28px;" > 
             <div class="easyui-layout" data-options="fit:true" >
-                <div data-options="region:'east',split:false,border:false" style="width:300px;background-color:#daeef5">                   
+         <!--       <div data-options="region:'east',split:false,border:true" style="width:300px;background-color:#daeef5">                   
                     <div align='right' >
-                        <a href="javascript:void(0)" class="easyui-menubutton" menu="#mm2" data-options="plain:true,iconCls:'icon-user'" >
+                        <a href="javascript:void(0)" class="easyui-menubutton" id="clock" menu="#mm2" data-options="plain:true,iconCls:'icon-user'" >
                             <?php echo $this->session->userdata('nama');?>,
                             <?php 
                             setlocale (LC_TIME, 'INDONESIAN');
@@ -158,10 +158,31 @@
                         </div>
                     </div>            
                 </div>
-                <div data-options="region:'center',split:false,border:false" style="background-color:#daeef5">
+         -->
+                <div data-options="region:'east',split:false,border:false" style="width:250px;background-color:#daeef5">
+                    <div align='right' >        
+                        <a href="javascript:void(0)" class="easyui-linkbutton" id="clock" data-options="plain:true,iconCls:'icon-time'">                            
+                        </a>           
+                    </div>
+                </div>
+         
+         <!--       <div data-options="region:'center',split:false,border:true" style="background-color:#daeef5">
                     <div>        
                         <a href="javascript:void(0)" onclick="dashboardTab('Dashboard')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-dashboard'">Dashboard</a>           
                     </div>
+                </div>
+         -->
+                <div data-options="region:'center',split:false,border:false" style="width:150px;background-color:#daeef5">                   
+                    <div align='left' >
+                        <a href="javascript:void(0)" class="easyui-menubutton" menu="#mm2" data-options="plain:true,iconCls:'icon-user'" >
+                            <?php echo $this->session->userdata('nama');?>                            
+                        </a>
+                        <div id="mm2" style="width:200px;">
+                            <div iconCls="icon-undo" onclick="mainReset()">Reset Password</div>
+                            <div class="menu-sep"></div>
+                            <div href="<?php echo site_url('main/logout'); ?>" iconCls="icon-logout">Logout</div>
+                        </div>
+                    </div>            
                 </div>
             </div>
             
@@ -195,6 +216,35 @@
             add_tab(node.text, node.uri, node.iconCls, node.type);
 	}
     });
+    
+    function startTime() {
+        var months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        var myDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jum&#39;at', 'Sabtu'];
+        var date = new Date();
+        var day = date.getDate();
+        var month = date.getMonth();
+        var thisDay = date.getDay(),
+            thisDay = myDays[thisDay];
+        var yy = date.getYear();
+        var year = (yy < 1000) ? yy + 1900 : yy;
+
+        var today=new Date(),
+        curr_hour=today.getHours(),
+        curr_min=today.getMinutes(),
+        curr_sec=today.getSeconds();
+        curr_hour=checkTime(curr_hour);
+        curr_min=checkTime(curr_min);
+        curr_sec=checkTime(curr_sec);
+        //document.getElementById('clock').innerHTML=curr_hour+":"+curr_min+":"+curr_sec;
+        $('#clock').linkbutton({text:thisDay + ', ' + day + ' ' + months[month] + ' ' + year + ' - ' + curr_hour+":"+curr_min+":"+curr_sec});
+    }
+    function checkTime(i) {
+        if (i<10) {
+            i="0" + i;
+        }
+        return i;
+    }
+    setInterval(startTime, 500);
     </script>
     <!-- Dialog Reset Form -->
     <div id="dlg-reset_main" class="easyui-dialog" style="width:400px; height:150px; padding: 10px 20px" closed="true" buttons="#dlg-buttons-reset_main">

@@ -9,7 +9,9 @@
         <tr>              
             <th data-options="field:'Id'"                   width="100" align="center" sortable="true">Kode Vendor</th>
             <th data-options="field:'Name'"                 width="300" halign="center" align="left" sortable="true">Nama Vendor</th>
-            <th data-options="field:'PayTerm'"              width="100" align="center" sortable="true" formatter="payterm">Payment Term</th>            
+            <th data-options="field:'PayTerm'"              width="100" align="center" sortable="true" formatter="payterm">Payment Term</th>
+            <th data-options="field:'VendGroup'"            width="100" align="center" sortable="true" >Grup</th>
+            <th data-options="field:'Tax'"                  width="100" align="center" sortable="true" >Pajak</th>
         </tr>
     </thead>
 </table>

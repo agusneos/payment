@@ -93,17 +93,21 @@ class Invoice extends CI_Controller {
            $InvoiceDate         = $data['cells'][$i][3];
            $Qty                 = $data['cells'][$i][4];
            $SalesBalance        = $data['cells'][$i][5];
-           $InvoiceAmount       = $data['cells'][$i][6];
-           $CurrencyCode        = $data['cells'][$i][7];
-           $ExchRate            = $data['cells'][$i][8];
-           $InvoiceRoundOff     = $data['cells'][$i][9];
-           $TaxGroup            = $data['cells'][$i][10];
-           $SumTax              = $data['cells'][$i][11];
-           $InvoiceAmountMST    = $data['cells'][$i][12];
+           //$InvoiceAmount       = $data['cells'][$i][6];
+           $CurrencyCode        = $data['cells'][$i][6];
+           $ExchRate            = $data['cells'][$i][7];
+           //$InvoiceRoundOff     = $data['cells'][$i][9];
+           //$TaxGroup            = $data['cells'][$i][10];
+           //$SumTax              = $data['cells'][$i][11];
+           //$InvoiceAmountMST    = $data['cells'][$i][12];
            
-           $query = $this->record->upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
+          /* $query = $this->record->upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                                         $SalesBalance, $InvoiceAmount, $CurrencyCode, $ExchRate,
                                         $InvoiceRoundOff, $TaxGroup, $SumTax, $InvoiceAmountMST);
+           * 
+           */
+           $query = $this->record->upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
+                                        $SalesBalance, $CurrencyCode, $ExchRate);
            if ($query)
            {
                $ok++;

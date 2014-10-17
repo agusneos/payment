@@ -5,16 +5,17 @@
 
 <!-- Data Grid -->
 <table id="grid-master_invoice"
-    data-options="pageSize:1000, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
-                showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
+    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+                showFooter:false, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
     <thead>
         <tr>           
             <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
-            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
-            <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
+            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
+            <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
+            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
         </tr>
     </thead>
 </table>
@@ -52,7 +53,7 @@
     }];
     
     $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
-        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'});
+        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'}).datagrid('enableFilter');
             
    function thousandSep(value,row,index)
     {

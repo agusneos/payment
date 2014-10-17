@@ -27,26 +27,14 @@
 <!-- Form -->
     <form id="fm-dialog_total_supplier" method="post" novalidate buttons="#dlg_btn-dialog_total_supplier">
         <div class="fitem">
-            <label for="type">Bulan</label>
-            <select id="bulan" name="bulan" class="easyui-combobox" style="width:100px;" required>
-                <option value="0"></option>
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maret</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Agustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
-            </select>
+            <label for="type">Vendor</label>
+            <input id="vendor" name="vendor" class="easyui-combobox" data-options="
+                url:'<?php echo site_url('report/saldo_supplier/get_supp'); ?>',
+                method:'get', valueField:'Id', textField:'Name', panelHeight:200" style="width:200px;" required/>
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
-            <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
+            <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true" style="width:100px;" />
         </div>
     </form>
 
@@ -90,5 +78,5 @@
     }
 </script>
 
-<!-- End of file v_dialog_total_supplier.php -->
-<!-- Location: ./views/report/total_supplier/v_dialog_total_supplier.php -->
+<!-- End of file v_dialog_saldo_supplier.php -->
+<!-- Location: ./views/report/saldo_supplier/v_dialog_saldo_supplier.php -->

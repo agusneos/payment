@@ -1,39 +1,32 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class M_total_supplier extends CI_Model
+class M_hutang_supplier extends CI_Model
 {    
-    static $table = 'VendInvoiceJour';
+    static $table1 = 'VendInvoiceJour';
+    static $table2 = 'Vendor';
     
     public function __construct() {
         parent::__construct();
         
     }
       
-    function cetak_total_supplier($id)
-    {
-        $pecah      = explode('-', $id);
-        $bulan      = $pecah[0];
-        $tahun      = $pecah[1];
-        
-        $sql        = 'SELECT Vendor.Name,
-                       Vendor.VendGroup,
-                       Vendor.Tax,
-                       SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
-                       VendInvoiceJour.InvoiceDate,
-                       VendInvoiceJour.CurrencyCode
+    function cetak_hutang_supplier()
+    {       
+        $sql        = 'SELECT Name, MONTHNAME(InvoiceDate) AS Bulan,
+                        YEAR(InvoiceDate) AS Tahun,
+                        SUM(IF(CurrencyCode = "IDR","",IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
+                        SUM(IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
                        
-                       FROM '.self::$table.'
+                       FROM '.self::$table1.'
                 
-                       LEFT JOIN Vendor
-                       ON VendInvoiceJour.OrderAccount = Vendor.Id
+                       LEFT JOIN '.self::$table2.'
+                       ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
                        
-                       WHERE MONTH(VendInvoiceJour.InvoiceDate) = '.$bulan.' AND
-                             YEAR(VendInvoiceJour.InvoiceDate) = '.$tahun.'
+                       WHERE PaymentSisa != 0
                                  
-                       GROUP BY VendInvoiceJour.OrderAccount,
-                             CASE WHEN SalesBalance >= 0 THEN "POS" ELSE "NEG" END
+                       GROUP BY Name, Bulan, Tahun
                              
-                       ORDER BY Vendor.Name ASC, SalesBalance DESC';
+                       ORDER BY Name ASC, Tahun ASC, Bulan ASC';
         return $this->db->query($sql);
         /*
         $this->db->select('SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
@@ -56,6 +49,6 @@ class M_total_supplier extends CI_Model
 }
 
 /*
- * End of file m_total_supplier.php
- * Location: ./models/report/m_total_supplier.php
+ * End of file m_hutang_supplier.php
+ * Location: ./models/report/m_hutang_supplier.php
  */

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  
-class M_total_supplier extends CI_Model
+class M_saldo_supplier extends CI_Model
 {    
     static $table = 'VendInvoiceJour';
     
@@ -8,8 +8,22 @@ class M_total_supplier extends CI_Model
         parent::__construct();
         
     }
+    
+    function get_supp()
+    {
+        $this->db->select('Id, Name');        
+        $this->db->order_by('Id', 'ASC');
+        $query  = $this->db->get('Vendor');
+                   
+        $data = array();
+        foreach ( $query->result() as $row )
+        {
+            array_push($data, $row); 
+        }       
+        return json_encode($data);
+    }
       
-    function cetak_total_supplier($id)
+    function cetak_saldo_supplier($id)
     {
         $pecah      = explode('-', $id);
         $bulan      = $pecah[0];
@@ -17,7 +31,6 @@ class M_total_supplier extends CI_Model
         
         $sql        = 'SELECT Vendor.Name,
                        Vendor.VendGroup,
-                       Vendor.Tax,
                        SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
                        VendInvoiceJour.InvoiceDate,
                        VendInvoiceJour.CurrencyCode

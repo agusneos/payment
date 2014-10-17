@@ -44,6 +44,30 @@ function hari_ini()
     return $st;
 }
 
+function ppn($salesbalance, $tax)
+{
+    if ($tax == 'PPN')
+    {
+        return $salesbalance * 0.1;
+    }
+    else
+    {
+        return '';
+    }
+}
+
+function amount($salesbalance, $tax)
+{
+    if ($tax == 'PPN')
+    {
+        return $salesbalance * 1.1;
+    }
+    else
+    {
+        return $salesbalance;
+    }
+}
+
 foreach($rows->result() as $data)
 {
     
@@ -93,11 +117,11 @@ foreach($rows->result() as $data)
             $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
             $pdf->Cell(7,$height,$data->Name,1,0,'L');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.') ,'TB',0,'R');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*0.1), 0, ',', '.'),'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TB',0,'R');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*1.1), 0, ',', '.'),'TRB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TRB',0,'R');
         }
         else
         {
@@ -106,17 +130,17 @@ foreach($rows->result() as $data)
             $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
             $pdf->Cell(7,$height,$data->Name,1,0,'L');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.') ,'TB',0,'R');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*0.1), 0, ',', '.'),'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TB',0,'R');
             $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*1.1), 0, ',', '.'),'TRB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TRB',0,'R');
         }       
         
         $noUrut++;
-        $SumSalesBalance    += $data->SalesBalance;
-        $SumTax             += $data->SalesBalance*0.1;
-        $SumInvoiceAmount   += $data->SalesBalance*1.1;
+        $SumSalesBalance    += round($data->SalesBalance);
+        $SumTax             += round(ppn($data->SalesBalance,$data->Tax));
+        $SumInvoiceAmount   += round(amount($data->SalesBalance,$data->Tax));
     }  
 }
 
@@ -163,11 +187,11 @@ foreach($rows->result() as $data)
             $pdf->Cell(0.7,$height,$noUrutImport,1,0,'C');
             $pdf->Cell(7,$height,$data->Name,1,0,'L');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance,2), 2, ',', '.') ,'TB',0,'R');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,'','TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TB',0,'R');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.'),'TRB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TRB',0,'R');
         }
         else
         {
@@ -176,17 +200,17 @@ foreach($rows->result() as $data)
             $pdf->Cell(0.7,$height,$noUrutImport,1,0,'C');
             $pdf->Cell(7,$height,$data->Name,1,0,'L');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance,2), 2, ',', '.') ,'TB',0,'R');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,'','TB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TB',0,'R');
             $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.'),'TRB',0,'R');
+            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TRB',0,'R');
         }        
         
         $noUrutImport++;
-        $SumSalesBalanceImport    += $data->SalesBalance;
-        //$SumTaxImport             += $data->SalesBalance*0.1;
-        $SumInvoiceAmountImport   += $data->SalesBalance;
+        $SumSalesBalanceImport    += round($data->SalesBalance,2);
+        $SumTaxImport             += round(ppn($data->SalesBalance,$data->Tax),2);
+        $SumInvoiceAmountImport   += round(amount($data->SalesBalance,$data->Tax),2);
     }  
 }
 
@@ -194,11 +218,11 @@ $pdf->SetFont('Arial','B',9);
 $pdf->Ln($height);
 $pdf->Cell(7.7,$height,'TOTAL',1,0,'C');
 $pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumSalesBalanceImport, 0, ',', '.'),'TB',0,'R');
+$pdf->Cell(2.5,$height,number_format($SumSalesBalanceImport, 2, ',', '.'),'TB',0,'R');
 $pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,'','TB',0,'R');
+$pdf->Cell(2.5,$height,number_format($SumTaxImport, 2, ',', '.'),'TB',0,'R');
 $pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumInvoiceAmountImport, 0, ',', '.'),'TRB',0,'R');
+$pdf->Cell(2.5,$height,number_format($SumInvoiceAmountImport, 2, ',', '.'),'TRB',0,'R');
 
 // END IMPORT //
 
