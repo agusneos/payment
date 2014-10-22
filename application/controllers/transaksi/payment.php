@@ -23,12 +23,9 @@ class Payment extends CI_Controller {
     {
         if(!isset($_POST))	
             show_404();        
-        $InvoiceId             = intval(addslashes($_POST['InvoiceId']));
-        //$id               = addslashes($_POST['invoiceid']);
-        $paymentcreatedate  = addslashes($_POST['paymentcreatedate']);
-        $paymentdate        = addslashes($_POST['paymentdate']);    
-        $paymentnumber      = addslashes($_POST['paymentnumber']);
-        
+        $InvoiceId              = addslashes($_POST['InvoiceId']);
+        $PaymentSisa            = addslashes($_POST['PaymentSisa']);
+       
         if($this->record->update($InvoiceId))
             echo json_encode(array('success'=>true));
         else
@@ -36,6 +33,25 @@ class Payment extends CI_Controller {
     }
     
     function createVoucher()
+    {
+        if(!isset($_POST))	
+            show_404();        
+        //$id                 = intval(addslashes($_POST['id']));
+        $OrderAccount       = addslashes($_POST['OrderAccount']);
+        $PaymentDate        = addslashes($_POST['PaymentDate']);
+        $PaymentNumber      = addslashes($_POST['PaymentNumber']); 
+        $Note               = addslashes($_POST['Note']); 
+        $InvoiceAmount      = addslashes($_POST['InvoiceAmount']);
+        $CurrencyCode       = addslashes($_POST['CurrencyCode']);
+        $ExchRate           = addslashes($_POST['ExchRate']);
+        
+        if($this->record->createVoucher())
+            echo json_encode(array('success'=>true));
+        else
+            echo json_encode(array('msg'=>'Gagal'));
+    }
+    
+    /*function createVoucher()
     {
         if(!isset($_POST))	
             show_404();        
@@ -53,6 +69,8 @@ class Payment extends CI_Controller {
         else
             echo json_encode(array('msg'=>'Gagal'));
     }
+     * 
+     */
     
     function createVoucherInvoice()
     {

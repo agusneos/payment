@@ -24,7 +24,7 @@ $pdf = new PDF();
 // variable awal
 date_default_timezone_set('Asia/Jakarta');
 $pdf->FPDF("P","cm","A4");
-$pdf->SetMargins(1,1,1);
+$pdf->SetMargins(0.5,1,0.5);
 //$pdf->AliasNbPages();
 $pdf->AddPage();
 
@@ -33,7 +33,7 @@ function format_date($tgl)
 {
     setlocale (LC_TIME, 'INDONESIAN');
     $tgl = strtotime($tgl);
-    $st = strftime( "%B %Y", $tgl);
+    $st = strftime( "%d %b %y", $tgl);
     return strtoupper($st);
 }
 
@@ -49,86 +49,62 @@ foreach($rows->result() as $data)
     
 }
 
-$tanggal = isset($data->InvoiceDate);
+//$tanggal = isset($data->InvoiceDate);
 $height = 0.5;
-$pdf->SetFont('Arial','',16);
+$pdf->SetFont('Arial','',14);
 $pdf->Cell(0,$height*1.5,'RINCIAN SALDO SUPPLIER',0,0,'C');
 $pdf->Ln($height*1.5);
-
-if ($tanggal)
-{
-    $pdf->Cell(0,$height*1.5, format_date($data->InvoiceDate),0,0,'C');
-}
-else
-{
-    $pdf->Error('Data Tidak Ditemukan.');
-}
+$pdf->Cell(0,$height*1.5,'GLOBAL INC',0,0,'C');
+$pdf->Ln($height*1.5);
+$pdf->Cell(0,$height*1.5,'TAHUN 2014',0,0,'C');
 $pdf->Ln($height*2);
 
 // START LOKAL //
 
-$pdf->SetFont('Arial','',12);
-$pdf->Cell(0,$height*1.5,'LOKAL',0,0,'L');
-$pdf->Ln($height*1.5);
-$pdf->SetFont('Arial','',9);
-$pdf->Cell(0.7,$height,'NO',1,0,'C');
-$pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
-$pdf->Cell(3.5,$height,'DPP',1,0,'C');
-$pdf->Cell(3.5,$height,'PPN',1,0,'C');
-$pdf->Cell(3.5,$height,'TOTAL',1,0,'C');
+$pdf->SetFont('Arial','',7);
+//$pdf->Cell(2,$height,'OrderAccount',1,0,'C');
+$pdf->Cell(2,$height,'PaymentDate',1,0,'C');
+$pdf->Cell(3,$height,'PaymentNumber',1,0,'C');
+$pdf->Cell(3,$height,'Note',1,0,'C');
+$pdf->Cell(2,$height,'DebetUSD',1,0,'C');
+$pdf->Cell(2,$height,'DebetIDR',1,0,'C');
+$pdf->Cell(2,$height,'KreditUSD',1,0,'C');
+$pdf->Cell(2,$height,'KreditIDR',1,0,'C');
+$pdf->Cell(2,$height,'saldo_usd',1,0,'C');
+$pdf->Cell(2,$height,'saldo_IDR',1,0,'C');
 
-$noUrut             = 1;
-$SumSalesBalance    = 0;
-$SumTax             = 0;
-$SumInvoiceAmount   = 0;
 
 foreach($rows->result() as $data)
-{   
-    if ($data->CurrencyCode == 'IDR')
+{
+    if ($data->DebetIDR > 0)
     {
-        if ($data->SalesBalance < 0)
-        {
-            $pdf->SetTextColor(255, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*0.1), 0, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*1.1), 0, ',', '.'),'TRB',0,'R');
-        }
-        else
-        {
-            $pdf->SetTextColor(0, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format($data->SalesBalance, 0, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*0.1), 0, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance*1.1), 0, ',', '.'),'TRB',0,'R');
-        }       
-        
-        $noUrut++;
-        $SumSalesBalance    += $data->SalesBalance;
-        $SumTax             += $data->SalesBalance*0.1;
-        $SumInvoiceAmount   += $data->SalesBalance*1.1;
-    }  
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Ln();
+        $pdf->Cell(2,$height,format_date($data->PaymentDate),1,0,'L');
+        $pdf->Cell(3,$height,$data->PaymentNumber,1,0,'L');
+        $pdf->Cell(3,$height,$data->Note,1,0,'L');
+        $pdf->Cell(2,$height,number_format($data->DebetUSD, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->DebetIDR, 0, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->KreditUSD, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->KreditIDR, 0, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->saldo_usd, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->saldo_IDR, 0, ',', '.'),1,0,'R'); 
+    }
+    else
+    {
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Ln();
+        $pdf->Cell(2,$height,format_date($data->PaymentDate),1,0,'L');
+        $pdf->Cell(3,$height,$data->PaymentNumber,1,0,'L');
+        $pdf->Cell(3,$height,$data->Note,1,0,'L');
+        $pdf->Cell(2,$height,number_format($data->DebetUSD, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->DebetIDR, 0, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->KreditUSD, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->KreditIDR, 0, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->saldo_usd, 2, ',', '.'),1,0,'R');
+        $pdf->Cell(2,$height,number_format($data->saldo_IDR, 0, ',', '.'),1,0,'R'); 
+    }
 }
-
-$pdf->SetFont('Arial','B',9);
-$pdf->Ln($height);
-$pdf->Cell(7.7,$height,'TOTAL',1,0,'C');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumSalesBalance, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumTax, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumInvoiceAmount, 0, ',', '.'),'TRB',0,'R');
 
 // END LOKAL //
 

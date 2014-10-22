@@ -2,7 +2,9 @@
  
 class M_check extends CI_Model
 {    
-    static $table = 'VendInvoiceJour';
+    static $table   = 'VendInvoiceJour';
+    static $vendor  = 'Vendor';
+    static $voucher = 'Voucher';
      
     public function __construct() {
         parent::__construct();
@@ -11,7 +13,7 @@ class M_check extends CI_Model
     function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 1000;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
         $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
@@ -49,13 +51,21 @@ class M_check extends CI_Model
             }
 	}
         
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, ExchRate, 
+                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
+                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
+        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, ExchRate,
+                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
+                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
+        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -66,7 +76,7 @@ class M_check extends CI_Model
             array_push($data, $row); 
         }
         
-        $this->db->select('SUM(Qty) AS Qty, SUM(SalesBalance) AS SalesBalance, 
+        /*$this->db->select('SUM(Qty) AS Qty, SUM(SalesBalance) AS SalesBalance, 
                         SUM(0) AS InvoiceAmount, SUM(0) AS ExchRate, 
                         SUM(InvoiceRoundOff) AS InvoiceRoundOff, SUM(SumTax) AS SumTax, 
                         SUM(InvoiceAmountMST) AS InvoiceAmountMST');
@@ -79,22 +89,103 @@ class M_check extends CI_Model
         {
             array_push($data2, $row2); 
         }   
+         * 
+         */
  
         $result = array();
 	$result['total']    = $total;
 	$result['rows']     = $data;
-        $result['footer']   = $data2;
+       // $result['footer']   = $data2;
         
         return json_encode($result);          
     }
     
     function update($InvoiceId)
-    {    
+    {
+   //     $SalesBalance      = $this->input->post('SalesBalance',true);
+        
+      /*  if ( $SalesBalance > 0 )
+        {
+            $PaymentSisa   = $SalesBalance;
+        }
+        else
+        {
+            $PaymentSisa   = $PaymentSisa;
+        }
+       * 
+       */
+        
         $this->db->where('InvoiceId', $InvoiceId);
         return $this->db->update(self::$table,array(            
-            'CheckDate' =>$this->input->post('checkdate',true)
+            'CheckDate'     => $this->input->post('checkdate',true)
+        //    'PaymentSisa'   => $PaymentSisa
         ));
-    }        
+    }
+    
+    function createVoucher()
+    {
+        $OA                 = $this->input->post('OrderAccount',true);
+        $PD                 = $this->input->post('PaymentDate',true);
+        $Ket                = $this->input->post('PaymentNumber',true);
+        $CurrencyCode       = $this->input->post('CurrencyCode',true);
+        $ExchRate           = $this->input->post('ExchRate',true);
+        $InvoiceAmount      = $this->input->post('InvoiceAmount',true);
+        
+        
+      //  $Note               = '';
+       // $PaymentNumber      = '';
+     //   $DebetUSD           = 0;
+      //  $DebetIDR           = 0;
+        $KreditUSD          = 0;
+        $KreditIDR          = 0;
+        
+        if ( $InvoiceAmount > 0 )
+        {
+            if ( $CurrencyCode == 'IDR')
+            {
+                $OrderAccount   = $OA;
+                $PaymentDate    = $PD;
+                $PaymentNumber  = $Ket;
+                $KreditIDR      = $InvoiceAmount;                
+            }
+            else
+            {
+                $OrderAccount   = $OA;
+                $PaymentDate    = $PD;
+                $PaymentNumber  = $Ket;
+                $KreditUSD      = round($InvoiceAmount, 2);
+                $KreditIDR      = $KreditUSD * $ExchRate;                
+            }
+        }
+       /* else
+        {
+            if ( $CurrencyCode == 'IDR')
+            {
+                $Note           = $Ket;
+                $DebetIDR       = $InvoiceAmount * -1;
+                
+            }
+            else
+            {
+                $Note           = $Ket;
+                $DebetUSD       = round($InvoiceAmount, 2) * -1;
+                $DebetIDR       = $DebetUSD * $ExchRate * -1;
+            }
+        }
+        * 
+        */
+        
+        return $this->db->insert(self::$voucher,array(
+            'OrderAccount'  => $OrderAccount,
+            'PaymentDate'   => $PaymentDate,
+            'PaymentNumber' => $PaymentNumber,
+       //     'Note'          => $Note,
+           // 'DebetUSD'      => round($DebetUSD, 2),
+           // 'DebetIDR'      => round($DebetIDR, 0),
+            'KreditUSD'     => round($KreditUSD, 2),
+            'KreditIDR'     => round($KreditIDR, 0),
+        ));
+    }
     
 }
 

@@ -24,10 +24,29 @@ class Check extends CI_Controller {
         if(!isset($_POST))	
             show_404();
         
-        $InvoiceId  = addslashes($_POST['InvoiceId']);
-        $checkdate  = addslashes($_POST['checkdate']);        
+        $InvoiceId      = addslashes($_POST['InvoiceId']);
+        $SalesBalance   = addslashes($_POST['SalesBalance']);
+        $checkdate      = addslashes($_POST['checkdate']);        
         
         if($this->record->update($InvoiceId))
+            echo json_encode(array('success'=>true));
+        else
+            echo json_encode(array('msg'=>'Gagal menghapus data'));
+    }
+    
+    function createVoucher()
+    {
+        if(!isset($_POST))	
+            show_404();
+        
+        $OrderAccount       = addslashes($_POST['OrderAccount']);
+        $PaymentDate        = addslashes($_POST['PaymentDate']);
+        $PaymentNumber      = addslashes($_POST['PaymentNumber']); 
+        $InvoiceAmount      = addslashes($_POST['InvoiceAmount']);
+        $CurrencyCode       = addslashes($_POST['CurrencyCode']);
+        $ExchRate           = addslashes($_POST['ExchRate']);        
+        
+        if($this->record->createVoucher())
             echo json_encode(array('success'=>true));
         else
             echo json_encode(array('msg'=>'Gagal menghapus data'));

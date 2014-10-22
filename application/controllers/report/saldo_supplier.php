@@ -29,8 +29,8 @@ class Saldo_supplier extends CI_Controller {
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        $id = $this->uri->segment(4);
-        $data['rows'] = $this->record->cetak_saldo_supplier($id);
+        $vt = $this->uri->segment(4);
+        $data['rows'] = $this->record->cetak_saldo_supplier($vt);
         $this->load->view('report/saldo_supplier/v_saldo_supplier.php',$data);
     }
     

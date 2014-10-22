@@ -1,11 +1,11 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
 
 <style type="text/css">
-    #fm-dialog_total_supplier{
+    #fm-dialog_saldo_supplier{
         margin:0;
         padding:20px 30px;
     }
-    #dlg_btn-dialog_total_supplier{
+    #dlg_btn-dialog_saldo_supplier{
         margin:0;
         padding:10px 100px;
     }
@@ -25,7 +25,7 @@
     }
 </style>
 <!-- Form -->
-    <form id="fm-dialog_total_supplier" method="post" novalidate buttons="#dlg_btn-dialog_total_supplier">
+    <form id="fm-dialog_saldo_supplier" method="post" novalidate buttons="#dlg_btn-dialog_saldo_supplier">
         <div class="fitem">
             <label for="type">Vendor</label>
             <input id="vendor" name="vendor" class="easyui-combobox" data-options="
@@ -39,24 +39,23 @@
     </form>
 
 <!-- Dialog Button -->
-<div id="dlg_btn-dialog_total_supplier">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="cetak_total_supplier()">Cetak</a>
+<div id="dlg_btn-dialog_saldo_supplier">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="cetak_saldo_supplier()">Cetak</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
-    function cetak_total_supplier()
+    function cetak_saldo_supplier()
     {
-        var isValid = $('#fm-dialog_total_supplier').form('validate');
+        var isValid = $('#fm-dialog_saldo_supplier').form('validate');
         if (isValid)
-        {         
-            var bulan   = $('#bulan').combobox('getValue');
+        {           
             var tahun   = $('#tahun').numberbox('getValue');            
-            var periode = bulan+'-'+tahun;
-            
-            var url = '<?php echo site_url('report/total_supplier/cetak_total_supplier'); ?>/' + periode;
+            var vendor  = $('#vendor').combobox('getValue');
+            var vt      = vendor+'-'+tahun;
+            var url     = '<?php echo site_url('report/saldo_supplier/cetak_saldo_supplier'); ?>/' + vt;
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
-            var title = 'Periode ' + periode;
+            var title   = vt;
             
             if ($('#tt').tabs('exists', title))
             {

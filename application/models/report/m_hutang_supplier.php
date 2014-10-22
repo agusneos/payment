@@ -10,10 +10,9 @@ class M_hutang_supplier extends CI_Model
         
     }
       
-    function cetak_hutang_supplier()
+    function cetak_hutang_supplier_summary()
     {       
-        $sql        = 'SELECT Name, MONTHNAME(InvoiceDate) AS Bulan,
-                        YEAR(InvoiceDate) AS Tahun,
+        $sql        = 'SELECT Name,
                         SUM(IF(CurrencyCode = "IDR","",IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
                         SUM(IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
                        
@@ -24,9 +23,9 @@ class M_hutang_supplier extends CI_Model
                        
                        WHERE PaymentSisa != 0
                                  
-                       GROUP BY Name, Bulan, Tahun
+                       GROUP BY Name
                              
-                       ORDER BY Name ASC, Tahun ASC, Bulan ASC';
+                       ORDER BY Name ASC';
         return $this->db->query($sql);
         /*
         $this->db->select('SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
@@ -43,6 +42,26 @@ class M_hutang_supplier extends CI_Model
         return $this->db->get(self::$table);
          * 
          */
+    }
+    
+    function cetak_hutang_supplier_detail()
+    {       
+        $sql        = 'SELECT Name, MONTH(InvoiceDate) AS Bulan,
+                        YEAR(InvoiceDate) AS Tahun,
+                        SUM(IF(CurrencyCode = "IDR","",IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
+                        SUM(IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
+                       
+                       FROM '.self::$table1.'
+                
+                       LEFT JOIN '.self::$table2.'
+                       ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
+                       
+                       WHERE PaymentSisa != 0
+                                 
+                       GROUP BY Name, Bulan, Tahun
+                             
+                       ORDER BY Name ASC, Tahun ASC, Bulan ASC';
+        return $this->db->query($sql);        
     }
        
     

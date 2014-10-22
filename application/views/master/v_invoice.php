@@ -50,6 +50,10 @@
         text:'Refresh',
         iconCls:'icon-reload',
         handler:function(){$('#grid-master_invoice').datagrid('reload');}
+    },{
+        text:'Update Rate',
+        iconCls:'icon-rate',
+        handler:function(){updateRate();}
     }];
     
     $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
@@ -114,6 +118,10 @@
         margin:0;
         padding:10px 30px;
     }
+    #fm-updateRate{
+        margin:0;
+        padding:10px 30px;
+    }
     .ftitle{
         font-size:14px;
         font-weight:bold;
@@ -144,8 +152,90 @@
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="uploadSave()">Simpan</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-upload').dialog('close')">Batal</a>
 </div>
+<!-- ----------- -->
+<div id="dlg-updateRate" class="easyui-dialog" style="width:400px; height:250px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-updateRate">
+    <form id="fm-updateRate" method="post" novalidate>       
+        <div class="fitem">
+            <label for="type">Bulan</label>
+            <select id="bulan" name="bulan" class="easyui-combobox" style="width:100px;" required>
+                <option value="0"></option>
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+        </div>
+        <div class="fitem">
+            <label for="type">Tahun</label>
+            <input id="tahun" name="tahun" class="easyui-numberspinner" data-options="increment:1,required:true"style="width:100px;" />
+        </div> 
+        <div class="fitem">
+            <label for="type">Rate</label>
+            <input id="rate" name="rate" class="easyui-numberbox" required="true"
+                   data-options="groupSeparator:'.',decimalSeparator:',', precision:0"/>
+        </div>
+    </form>
+</div>
+
+<!-- Dialog Button -->
+<div id="dlg_buttons-updateRate">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="updateRateSave()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-updateRate').dialog('close')">Batal</a>
+</div>
 
 <script type="text/javascript">
+    function updateRate()
+    {
+        var date = new Date();
+        var yy = date.getYear();
+        var year = (yy < 1000) ? yy + 1900 : yy;
+        
+        $('#dlg-updateRate').dialog({modal: true}).dialog('open').dialog('setTitle','Update Rate');
+        $('#fm-updateRate').form('reset');
+        $('#tahun').numberspinner('setValue',year);
+        
+        urls = '<?php echo site_url('master/invoice/updateRate'); ?>/';
+    }
+    
+    function updateRateSave()
+    {
+        $('#fm-updateRate').form('submit',{
+            url: urls,
+            onSubmit: function(){   
+                return $(this).form('validate');
+            },
+            success: function(result){
+                var result = eval('('+result+')');
+                if(result.success)
+                {
+                    
+                    $('#dlg-updateRate').dialog('close');
+                    $('#grid-master_invoice').datagrid('reload');
+                    $.messager.show({
+                            title: 'Info',
+                           // msg: result.total + ' ' +result.ok + ' ' + result.ng
+                            msg: 'Sukses'
+                            });
+                } 
+                else 
+                {
+                    $.messager.show({
+                        title: 'Error',
+                        msg: result.msg
+                    });
+                }
+            }
+        });
+    }
+    
     function upload()
     {
         $('#dlg-upload').dialog({modal: true}).dialog('open').dialog('setTitle','Upload File');

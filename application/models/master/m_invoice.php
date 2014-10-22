@@ -115,6 +115,23 @@ class M_invoice extends CI_Model
                 "0000-00-00 00:00:00", '.$SalesBalance.')');
     }
     
+    function updateRate()
+    {
+        $bulan  = $this->input->post('bulan',true);
+        $tahun  = $this->input->post('tahun',true);
+        $rate   = $this->input->post('rate',true);
+        
+    //    return $this->db->simple_query('UPDATE '.self::$table.' SET ExchRate='.$rate.' WHERE
+     //       CurrencyCode="USD" AND MONTH(InvoiceDate)='.$bulan.' AND YEAR(InvoiceDate)='.$tahun);
+        
+        $this->db->where('CurrencyCode', 'USD')
+                 ->where('MONTH(InvoiceDate)', $bulan)
+                 ->where('YEAR(InvoiceDate)', $tahun);
+        return $this->db->update(self::$table,array(
+            'ExchRate'  => $rate
+        ));
+ 
+    }
 }
 
 /* End of file m_invoice.php */

@@ -5,18 +5,17 @@
 
 <!-- Data Grid -->
 <table id="grid-transaksi_check"
-    data-options="pageSize:1000, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
-                showFooter:true, fit:true, fitColumns:true, toolbar:toolbar_transaksi_check">
+    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+                showFooter:false, fit:true, fitColumns:true, toolbar:toolbar_transaksi_check">
     <thead>
         <tr>           
             <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
-            <th data-options="field:'CurrencyCode'"         width="50"  align="center" sortable="true" >Currency</th>
-            <th data-options="field:'ExchRate'"             width="80" align="center" sortable="true" formatter="thousandSepIDR" >Rate</th>
-            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>            
-            <th data-options="field:'InvoiceAmountMST'"     width="100" align="center" sortable="true" formatter="thousandSepIDR" >Invoice Amount IDR</th>
+            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
+            <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
+            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
         </tr>
     </thead>
 </table>
@@ -47,7 +46,17 @@
                 var row = rows[i];
                 //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
                 $.post('<?php echo site_url('transaksi/check/update'); ?>',
-                    {InvoiceId:row.InvoiceId, checkdate:timestamp()},'json');
+                    {InvoiceId      : row.InvoiceId,
+                     SalesBalance   : row.SalesBalance,
+                     checkdate      : timestamp()},'json');
+                    
+                $.post('<?php echo site_url('transaksi/check/createVoucher'); ?>',
+                    {OrderAccount:row.OrderAccount, 
+                     PaymentDate:row.InvoiceDate,
+                     PaymentNumber:row.InvoiceId,
+                     InvoiceAmount:row.InvoiceAmount,
+                     CurrencyCode:row.CurrencyCode, 
+                     ExchRate:row.ExchRate},'json');
                 //$.messager.alert('Info', row.InvoiceId);
                /* $.messager.show({
                             title: 'Info',
@@ -79,19 +88,7 @@
             return accounting.formatMoney(value, "$ ", 2, ".", ",");
         }        
     }
-    
-    function thousandSepIDR(value,row,index)
-    {
-        if (value == 0)
-        {
-            return "";
-        }        
-        else
-        {
-            return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
-        }        
-    }    
-    
+       
     function timestamp(){
         var today   = new Date();
         var dd      = today.getDate();

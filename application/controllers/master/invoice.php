@@ -126,6 +126,17 @@ class Invoice extends CI_Controller {
         //echo json_encode(array('berhasil'=>$sukses));
         //echo json_encode(array('gagal'=>$gagal));
     }
+    
+    function updateRate()
+    {
+        if(!isset($_POST))	
+            show_404();
+
+        if($this->record->updateRate())
+            echo json_encode(array('success'=>true));
+        else
+            echo json_encode(array('msg'=>'Gagal mengubah data'));
+    }
 
 }
 

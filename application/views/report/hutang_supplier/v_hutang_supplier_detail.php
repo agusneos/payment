@@ -32,16 +32,19 @@ $pdf->AddPage();
 function format_date($tgl)
 {
     setlocale (LC_TIME, 'INDONESIAN');
-    $tgl = strtotime($tgl);
-    $st = strftime( "%B %Y", $tgl);
-    return strtoupper($st);
+    $tgl  = mktime(0,0,0,$tgl+1,0,0);
+   // $b = strtotime($b);
+    $tgl = strftime( "%B", $tgl);
+    //return strtoupper($st);
+    return $tgl;
 }
 
 function hari_ini()
 {
     setlocale (LC_TIME, 'INDONESIAN');
     $st = strftime( "%d %B %Y", strtotime(date('d-F-Y')));
-    return $st;
+    return strtoupper($st);
+    //return $st;
 }
 
 function ppn($salesbalance, $tax)
@@ -68,6 +71,11 @@ function amount($salesbalance, $tax)
     }
 }
 
+function bulan_tahun($bulan, $tahun)
+{
+    return $bulan.' '.$tahun;
+}
+
 //foreach($rows->result() as $data)
 //{
     
@@ -76,57 +84,59 @@ function amount($salesbalance, $tax)
 //$tanggal = isset($data->InvoiceDate);
 $height = 0.5;
 $pdf->SetFont('Arial','',16);
-$pdf->Cell(0,$height*1.5,'HUTANG USAHA',0,0,'C');
+$pdf->Cell(0,$height*1.5,'DETAIL HUTANG USAHA',0,0,'C');
 $pdf->Ln($height*1.5);
-$pdf->Ln($height*2);
+$pdf->Cell(0,$height*1.5,'PER '.  hari_ini(),0,0,'C');
+//$pdf->Ln($height*2);
 
 // START LOKAL //
 
 
-$pdf->Ln($height*1.5);
+$pdf->Ln($height*2);
 $pdf->SetFont('Arial','',9);
-$pdf->Cell(0.7,$height,'NO',1,0,'C');
+$pdf->Cell(0.5,$height,'',0,0,'C');
+$pdf->Cell(1,$height,'NO',1,0,'C');
 $pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
-$pdf->Cell(2,$height,'BULAN',1,0,'C');
-$pdf->Cell(2,$height,'TAHUN',1,0,'C');
+$pdf->Cell(3,$height,'BULAN',1,0,'C');
+//$pdf->Cell(2,$height,'TAHUN',1,0,'C');
 $pdf->Cell(3.5,$height,'INVOICE AMOUNT',1,0,'C');
 $pdf->Cell(3.5,$height,'INVOICE AMOUNT IDR',1,0,'C');
 
-$noUrut             = 1;
-//$SumSalesBalance    = 0;
-//$SumTax             = 0;
+$noUrut                 = 1;
+$SumInvoiceAmount       = 0;
+$SumInvoiceAmountIdr    = 0;
 //$SumInvoiceAmount   = 0;
 
 foreach($rows->result() as $data)
 {   
     $pdf->Ln();
-    $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
+    $pdf->Cell(0.5,$height,'',0,0,'C');
+    $pdf->Cell(1,$height,$noUrut,1,0,'C');
     $pdf->Cell(7,$height,$data->Name,1,0,'L');
-    $pdf->Cell(2,$height,$data->Bulan,1,0,'C');
-    $pdf->Cell(2,$height,$data->Tahun,1,0,'C');
+    $pdf->Cell(3,$height, bulan_tahun(format_date($data->Bulan),$data->Tahun),1,0,'C');
+    //$pdf->Cell(2,$height,$data->Tahun,1,0,'C');
     $pdf->Cell(1,$height,'$','LTB',0,'L');
     $pdf->Cell(2.5,$height,number_format($data->InvoiceAmount, 2, ',', '.'),'TB',0,'R');
     $pdf->Cell(1,$height,'Rp.','LTB',0,'L');    
     $pdf->Cell(2.5,$height,number_format($data->InvoiceAmountIdr, 0, ',', '.'),'TRB',0,'R');
         
     $noUrut++;
-    //$SumSalesBalance    += round($data->SalesBalance);
+    $SumInvoiceAmount       += round($data->InvoiceAmount, 2);
+    $SumInvoiceAmountIdr    += round($data->InvoiceAmountIdr);
     //$SumTax             += round(ppn($data->SalesBalance,$data->Tax));
    // $SumInvoiceAmount   += round(amount($data->SalesBalance,$data->Tax));
       
 }
-/*
+
 $pdf->SetFont('Arial','B',9);
 $pdf->Ln($height);
-$pdf->Cell(7.7,$height,'TOTAL',1,0,'C');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumSalesBalance, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumTax, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumInvoiceAmount, 0, ',', '.'),'TRB',0,'R');
- * 
- */
+$pdf->Cell(0.5,$height,'',0,0,'C');
+$pdf->Cell(11,$height,'TOTAL',1,0,'C');
+$pdf->Cell(1,$height,'$','LTB',0,'L');
+$pdf->Cell(2.5,$height,number_format($SumInvoiceAmount, 2, ',', '.'),'TB',0,'R');
+$pdf->Cell(1,$height,'Rp.','LTB',0,'L');;
+$pdf->Cell(2.5,$height,number_format($SumInvoiceAmountIdr, 0, ',', '.'),'TRB',0,'R');
+
 
 // END LOKAL //
 
