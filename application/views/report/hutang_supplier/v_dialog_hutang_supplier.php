@@ -38,8 +38,8 @@
 
 <!-- Dialog Button -->
 <div id="dlg_btn-dialog_hutang_supplier">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="cetak_hutang_supplier()">Cetak</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="cetak_hutang_supplier()">Cetak</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">

@@ -56,7 +56,7 @@ class M_check extends CI_Model
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
-        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
+     //   $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
@@ -65,7 +65,7 @@ class M_check extends CI_Model
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
-        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
+       // $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);

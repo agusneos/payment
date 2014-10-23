@@ -57,7 +57,7 @@ class M_payment extends CI_Model
         $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentSisa !=', 0);
-        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
+      //  $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
@@ -67,7 +67,7 @@ class M_payment extends CI_Model
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentSisa !=', 0);
-        $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
+       // $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);

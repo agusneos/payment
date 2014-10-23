@@ -1,12 +1,14 @@
 /**
- * easyloader - jQuery EasyUI
+ * jQuery EasyUI 1.4
  * 
- * Copyright (c) 2009-2013 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2014 www.jeasyui.com. All rights reserved.
  *
- * Licensed under the GPL or commercial licenses
- * To use it on other terms please contact us: info@jeasyui.com
- * http://www.gnu.org/licenses/gpl.txt
- * http://www.jeasyui.com/license_commercial.php
+ * Licensed under the GPL license: http://www.gnu.org/licenses/gpl.txt
+ * To use it on other terms please contact us at info@jeasyui.com
+ *
+ */
+/**
+ * easyloader - jQuery EasyUI
  * 
  */
 (function(){
@@ -107,10 +109,20 @@
 			js:'jquery.calendar.js',
 			css:'calendar.css'
 		},
+		textbox:{
+			js:'jquery.textbox.js',
+			css:'textbox.css',
+			dependencies:['validatebox','linkbutton']
+		},
+		filebox:{
+			js:'jquery.filebox.js',
+			css:'filebox.css',
+			dependencies:['textbox']
+		},
 		combo:{
 			js:'jquery.combo.js',
 			css:'combo.css',
-			dependencies:['panel','validatebox']
+			dependencies:['panel','textbox']
 		},
 		combobox:{
 			js:'jquery.combobox.js',
@@ -132,17 +144,17 @@
 		},
 		numberbox:{
 			js:'jquery.numberbox.js',
-			dependencies:['validatebox']
+			dependencies:['textbox']
 		},
 		searchbox:{
 			js:'jquery.searchbox.js',
 			css:'searchbox.css',
-			dependencies:['menubutton']
+			dependencies:['menubutton','textbox']
 		},
 		spinner:{
 			js:'jquery.spinner.js',
 			css:'spinner.css',
-			dependencies:['validatebox']
+			dependencies:['textbox']
 		},
 		numberspinner:{
 			js:'jquery.numberspinner.js',

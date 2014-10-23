@@ -1,12 +1,14 @@
 /**
- * propertygrid - jQuery EasyUI
+ * jQuery EasyUI 1.4
  * 
- * Copyright (c) 2009-2013 www.jeasyui.com. All rights reserved.
+ * Copyright (c) 2009-2014 www.jeasyui.com. All rights reserved.
  *
- * Licensed under the GPL or commercial licenses
- * To use it on other terms please contact us: info@jeasyui.com
- * http://www.gnu.org/licenses/gpl.txt
- * http://www.jeasyui.com/license_commercial.php
+ * Licensed under the GPL license: http://www.gnu.org/licenses/gpl.txt
+ * To use it on other terms please contact us at info@jeasyui.com
+ *
+ */
+/**
+ * propertygrid - jQuery EasyUI
  * 
  * Dependencies:
  * 	 datagrid
@@ -21,22 +23,27 @@
 		$(target).datagrid($.extend({}, opts, {
 			cls:'propertygrid',
 			view:(opts.showGroup ? opts.groupView : opts.view),
-			onClickRow:function(index, row){
+			onClickCell:function(index, field, value){
 				if (currTarget != this){
-//					leaveCurrRow();
 					stopEditing(currTarget);
 					currTarget = this;
 				}
+				var row = $(this).datagrid('getRows')[index];
 				if (opts.editIndex != index && row.editor){
-					var col = $(this).datagrid('getColumnOption', "value");
+					var col = $(this).datagrid('getColumnOption', 'value');
 					col.editor = row.editor;
-//					leaveCurrRow();
 					stopEditing(currTarget);
 					$(this).datagrid('beginEdit', index);
-					$(this).datagrid('getEditors', index)[0].target.focus();
-					opts.editIndex = index;
+					var ed = $(this).datagrid('getEditor', {index:index,field:field});
+					if (!ed){
+						ed = $(this).datagrid('getEditor', {index:index,field:'value'});
+					}
+					if (ed){
+						getInputBox(ed.target).focus();
+						opts.editIndex = index;
+					}
 				}
-				opts.onClickRow.call(target, index, row);
+				opts.onClickCell.call(target, index, field, value);
 			},
 			loadFilter:function(data){
 				stopEditing(this);
@@ -45,29 +52,14 @@
 		}));
 		$(document).unbind('.propertygrid').bind('mousedown.propertygrid', function(e){
 			var p = $(e.target).closest('div.datagrid-view,div.combo-panel');
-//			var p = $(e.target).closest('div.propertygrid,div.combo-panel');
 			if (p.length){return;}
 			stopEditing(currTarget);
 			currTarget = undefined;
 		});
-		
-//		function leaveCurrRow(){
-//			var t = $(currTarget);
-//			if (!t.length){return;}
-//			var opts = $.data(currTarget, 'propertygrid').options;
-//			var index = opts.editIndex;
-//			if (index == undefined){return;}
-//			var ed = t.datagrid('getEditors', index)[0];
-//			if (ed){
-//				ed.target.blur();
-//				if (t.datagrid('validateRow', index)){
-//					t.datagrid('endEdit', index);
-//				} else {
-//					t.datagrid('cancelEdit', index);
-//				}
-//			}
-//			opts.editIndex = undefined;
-//		}
+	}
+	
+	function getInputBox(t){
+		return $(t).data('textbox') ? $(t).textbox('textbox') : $(t);
 	}
 	
 	function stopEditing(target){
@@ -76,9 +68,11 @@
 		var opts = $.data(target, 'propertygrid').options;
 		var index = opts.editIndex;
 		if (index == undefined){return;}
-		var ed = t.datagrid('getEditors', index)[0];
-		if (ed){
-			ed.target.blur();
+		var editors = t.datagrid('getEditors', index);
+		if (editors.length){
+			$.map(editors, function(ed){
+				getInputBox(ed.target).blur();
+			});
 			if (t.datagrid('validateRow', index)){
 				t.datagrid('endEdit', index);
 			} else {

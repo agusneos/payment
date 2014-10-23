@@ -44,35 +44,49 @@ function hari_ini()
     return $st;
 }
 
+function tahun($tgl)
+{
+    setlocale (LC_TIME, 'INDONESIAN');
+    $tgl = strtotime($tgl);
+    $st = strftime( "Tahun : %Y", $tgl);
+    return strtoupper($st);
+}
+
+
 foreach($rows->result() as $data)
 {
     
 }
 
-//$tanggal = isset($data->InvoiceDate);
+$tanggal = isset($data->PaymentDate);
 $height = 0.5;
 $pdf->SetFont('Arial','',14);
 $pdf->Cell(0,$height*1.5,'RINCIAN SALDO SUPPLIER',0,0,'C');
 $pdf->Ln($height*1.5);
-$pdf->Cell(0,$height*1.5,'GLOBAL INC',0,0,'C');
+if ($tanggal)
+    $pdf->Cell(0,$height*1.5,$data->Name,0,0,'C');
+else
+    $pdf->Error('Data Tidak Ditemukan.');
+//$pdf->Cell(0,$height*1.5,  nama($datas->Name),0,0,'C');
 $pdf->Ln($height*1.5);
-$pdf->Cell(0,$height*1.5,'TAHUN 2014',0,0,'C');
+$pdf->Cell(0,$height*1.5,tahun($data->PaymentDate),0,0,'C');
 $pdf->Ln($height*2);
 
 // START LOKAL //
 
-$pdf->SetFont('Arial','',7);
+$pdf->SetFont('Arial','B',7);
 //$pdf->Cell(2,$height,'OrderAccount',1,0,'C');
-$pdf->Cell(2,$height,'PaymentDate',1,0,'C');
-$pdf->Cell(3,$height,'PaymentNumber',1,0,'C');
-$pdf->Cell(3,$height,'Note',1,0,'C');
-$pdf->Cell(2,$height,'DebetUSD',1,0,'C');
-$pdf->Cell(2,$height,'DebetIDR',1,0,'C');
-$pdf->Cell(2,$height,'KreditUSD',1,0,'C');
-$pdf->Cell(2,$height,'KreditIDR',1,0,'C');
-$pdf->Cell(2,$height,'saldo_usd',1,0,'C');
-$pdf->Cell(2,$height,'saldo_IDR',1,0,'C');
+$pdf->Cell(2,$height,'Tanggal',1,0,'C');
+$pdf->Cell(3,$height,'No. Fakt. / Inv / Nota',1,0,'C');
+$pdf->Cell(3,$height,'Keterangan',1,0,'C');
+$pdf->Cell(2,$height,'DEBET USD',1,0,'C');
+$pdf->Cell(2,$height,'DEBET IDR',1,0,'C');
+$pdf->Cell(2,$height,'KREDIT USD',1,0,'C');
+$pdf->Cell(2,$height,'KREDIT IDR',1,0,'C');
+$pdf->Cell(2,$height,'SALDO USD',1,0,'C');
+$pdf->Cell(2,$height,'SALDO IDR',1,0,'C');
 
+$pdf->SetFont('Arial','',7);
 
 foreach($rows->result() as $data)
 {

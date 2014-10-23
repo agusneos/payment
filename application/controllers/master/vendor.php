@@ -30,12 +30,12 @@ class Vendor extends CI_Controller {
             echo json_encode(array('msg'=>'Gagal memasukkan data'));
     }     
     
-    function update($id=null)
+    function update($Id=null)
     {
         if(!isset($_POST))	
             show_404();
 
-        if($this->record->update($id))
+        if($this->record->update($Id))
             echo json_encode(array('success'=>true));
         else
             echo json_encode(array('msg'=>'Gagal mengubah data'));
@@ -46,11 +46,21 @@ class Vendor extends CI_Controller {
         if(!isset($_POST))	
             show_404();
 
-        $id = intval(addslashes($_POST['id']));
-        if($this->record->delete($id))
+        $Id = addslashes($_POST['Id']);
+        if($this->record->delete($Id))
             echo json_encode(array('success'=>true));
         else
             echo json_encode(array('msg'=>'Gagal menghapus data'));
+    }
+    
+    function enumVendGroup()
+    {
+        echo $this->record->enumField('VendGroup');
+    }
+    
+    function enumTax()
+    {
+        echo $this->record->enumField('Tax');
     }
                 
 }

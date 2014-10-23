@@ -17,7 +17,7 @@ class M_total_supplier extends CI_Model
         
         $sql        = 'SELECT Vendor.Name,
                        Vendor.VendGroup,
-                       Vendor.Tax,
+                       VendInvoiceJour.Tax,
                        SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
                        VendInvoiceJour.InvoiceDate,
                        VendInvoiceJour.CurrencyCode

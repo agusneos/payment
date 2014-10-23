@@ -6,9 +6,10 @@ class M_vendor extends CI_Model
      
     public function __construct() {
         parent::__construct();
+        $this->load->helper('database'); // Digunakan untuk memunculkan data Enum
     }
 
-    public function index()
+    function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
         $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 50;
@@ -70,74 +71,39 @@ class M_vendor extends CI_Model
 	$result['rows'] = $data;
         
         return json_encode($result);          
-    }
+    }   
         
-    public function create()
+    function create()
     {
         return $this->db->insert(self::$table,array(
-            'id'=>$this->input->post('id',true),
-            'activation_date'=>$this->input->post('activation_date',true),
-            'picking_route'=>$this->input->post('picking_route',true),
-            'customer_requisition'=>$this->input->post('customer_requisition',true),
-            'customer_account'=>$this->input->post('customer_account',true),
-            'name'=>$this->input->post('name',true),
-            'delivery_date'=>$this->input->post('delivery_date',true),
-            'item_number'=>$this->input->post('item_number',true),
-            'item_name'=>$this->input->post('item_name',true),
-            'external'=>$this->input->post('external',true),
-            'ca_number'=>$this->input->post('ca_number',true),
-            'quantity'=>$this->input->post('quantity',true),
-            'actual_qty'=>$this->input->post('actual_qty',true),
-            'box'=>$this->input->post('box',true),
-            'urgent'=>$this->input->post('urgent',true),
-            'no_stock'=>$this->input->post('no_stock',true),
-            'close'=>$this->input->post('close',true),
-            'upload_time'=>$this->input->post('upload_time',true)
-            
+            'Id'=>$this->input->post('Id',true),
+            'Name'=>$this->input->post('Name',true),
+            'PayTerm'=>$this->input->post('PayTerm',true),
+            'VendGroup'=>$this->input->post('VendGroup',true),
+            'Tax'=>$this->input->post('Tax',true)            
         ));
     }
     
-    public function update($id)
+    function update($Id)
     {
-        $this->db->where('id', $id);
+        $this->db->where('Id', $Id);
         return $this->db->update(self::$table,array(
-            'id'=>$this->input->post('id',true),
-            'activation_date'=>$this->input->post('activation_date',true),
-            'picking_route'=>$this->input->post('picking_route',true),
-            'customer_requisition'=>$this->input->post('customer_requisition',true),
-            'customer_account'=>$this->input->post('customer_account',true),
-            'name'=>$this->input->post('name',true),
-            'delivery_date'=>$this->input->post('delivery_date',true),
-            'item_number'=>$this->input->post('item_number',true),
-            'item_name'=>$this->input->post('item_name',true),
-            'external'=>$this->input->post('external',true),
-            'ca_number'=>$this->input->post('ca_number',true),
-            'quantity'=>$this->input->post('quantity',true),
-            'actual_qty'=>$this->input->post('actual_qty',true),
-            'box'=>$this->input->post('box',true),
-            'urgent'=>$this->input->post('urgent',true),
-            'no_stock'=>$this->input->post('no_stock',true),
-            'close'=>$this->input->post('close',true),
-            'upload_time'=>$this->input->post('upload_time',true)
+            'Name'=>$this->input->post('Name',true),
+            'PayTerm'=>$this->input->post('PayTerm',true),
+            'VendGroup'=>$this->input->post('VendGroup',true),
+            'Tax'=>$this->input->post('Tax',true) 
         ));
     }
     
-    public function update2($id)
-    {    
-        $this->db->where('id', $id);
-        return $this->db->update(self::$table,array(            
-            'actual_qty'=>$this->input->post('actual_qty',true),
-            'box'       =>$this->input->post('box',true),
-            'urgent'    =>$this->input->post('urgent',true),
-            'no_stock'  =>$this->input->post('no_stock',true),
-            'picked'  =>$this->input->post('picked',true),
-            'close'     =>$this->input->post('close',true)
-        ));
-    }
-    
-    public function delete($id)
+    function delete($Id)
     {
-        return $this->db->delete(self::$table, array('id' => $id)); 
+        return $this->db->delete(self::$table, array('Id' => $Id)); 
+    }
+    
+    function enumField($field)
+    {
+        $enums = field_enums(self::$table, $field);
+        return json_encode($enums);
     }
     
 }

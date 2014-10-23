@@ -5,11 +5,10 @@
 
 <!-- Data Grid -->
 <table id="grid-master_invoice"
-    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:true, 
                 showFooter:false, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
     <thead>
         <tr>           
-            <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
@@ -23,37 +22,17 @@
 <script type="text/javascript">
     
     var toolbar_master_invoice = [{
-        text:'New',
-        iconCls:'icon-new_file',
-        handler:function(){}
-    },{
-        text:'Edit',
-        iconCls:'icon-edit',
-        handler:function(){}
-    },{
-        text:'Delete',
-        iconCls:'icon-cancel',
-        handler:function(){}
-    },{
         text:'Upload',
         iconCls:'icon-upload',
         handler:function(){upload();}
     },{
-        text:'Download',
-        iconCls:'icon-download',
-        handler:function(){}
-    },{
-        text:'Print',
-        iconCls:'icon-print',
-        handler:function(){}
+        text:'Update Rate',
+        iconCls:'icon-rate',
+        handler:function(){updateRate();}
     },{
         text:'Refresh',
         iconCls:'icon-reload',
         handler:function(){$('#grid-master_invoice').datagrid('reload');}
-    },{
-        text:'Update Rate',
-        iconCls:'icon-rate',
-        handler:function(){updateRate();}
     }];
     
     $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
@@ -138,26 +117,26 @@
     }
 </style>
     
-<div id="dlg-upload" class="easyui-dialog" style="width:400px; height:330px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-upload">
+<div id="dlg-upload" class="easyui-dialog" style="width:400px; height:150px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-upload">
     <form id="fm-upload" method="post" enctype="multipart/form-data" novalidate>       
         <div class="fitem">
             <label for="type">File</label>
-            <input type="file" id="file" name="file" class="easyui-validatebox" required="true"/>
+            <input id="file" name="file" class="easyui-filebox" required="true"/>
         </div> 
     </form>
 </div>
 
 <!-- Dialog Button -->
 <div id="dlg_buttons-upload">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="uploadSave()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-upload').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="uploadSave()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-upload').dialog('close')">Batal</a>
 </div>
 <!-- ----------- -->
 <div id="dlg-updateRate" class="easyui-dialog" style="width:400px; height:250px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-updateRate">
     <form id="fm-updateRate" method="post" novalidate>       
         <div class="fitem">
             <label for="type">Bulan</label>
-            <select id="bulan" name="bulan" class="easyui-combobox" style="width:100px;" required>
+            <select id="bulan1" name="bulan1" class="easyui-combobox" style="width:100px;" required>
                 <option value="0"></option>
                 <option value="1">Januari</option>
                 <option value="2">Februari</option>
@@ -175,11 +154,11 @@
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
-            <input id="tahun" name="tahun" class="easyui-numberspinner" data-options="increment:1,required:true"style="width:100px;" />
+            <input id="tahun1" name="tahun1" class="easyui-numberspinner" data-options="increment:1,required:true"style="width:100px;" />
         </div> 
         <div class="fitem">
             <label for="type">Rate</label>
-            <input id="rate" name="rate" class="easyui-numberbox" required="true"
+            <input id="rate1" name="rate1" class="easyui-numberbox" required="true"
                    data-options="groupSeparator:'.',decimalSeparator:',', precision:0"/>
         </div>
     </form>
@@ -187,8 +166,8 @@
 
 <!-- Dialog Button -->
 <div id="dlg_buttons-updateRate">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="updateRateSave()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-updateRate').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="updateRateSave()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-updateRate').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
@@ -200,7 +179,7 @@
         
         $('#dlg-updateRate').dialog({modal: true}).dialog('open').dialog('setTitle','Update Rate');
         $('#fm-updateRate').form('reset');
-        $('#tahun').numberspinner('setValue',year);
+        $('#tahun1').numberspinner('setValue',year);
         
         urls = '<?php echo site_url('master/invoice/updateRate'); ?>/';
     }

@@ -18,5 +18,17 @@ class Dashboard extends CI_Controller {
          else 
             $this->load->view('v_dashboard');                
     }
+    
+    function willindex()
+    {        
+        $auth       = new Auth();
+         // mencegah user yang belum login untuk mengakses halaman ini
+        $auth->restrict();
+        
+        if (isset($_GET['grid'])) 
+            echo $this->record->willindex();        
+         else 
+            $this->load->view('v_dashboard');                
+    }
 
 }

@@ -104,7 +104,7 @@
     }
 </style>
     
-<div id="dlg-paid" class="easyui-dialog" style="width:400px; height:330px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-paid">
+<div id="dlg-paid" class="easyui-dialog" style="width:400px; height:230px; padding: 10px 20px" closed="true" buttons="#dlg_buttons-paid">
     <form id="fm-paid" method="post" novalidate>       
         <div class="fitem">
             <label for="type">Tanggal Bayar</label>
@@ -113,7 +113,7 @@
         </div>
         <div class="fitem">
             <label for="type">Kode Bayar</label>
-            <input id="paidno" name="paid_no" class="easyui-validatebox" required="true"/>
+            <input id="paidno" name="paid_no" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Total Amount</label>
@@ -121,7 +121,7 @@
                    data-options="groupSeparator:'.',decimalSeparator:',', precision:2"/>
         </div>
         <div class="fitem">
-            <input id="InvoiceAmountTemp" name="InvoiceAmountTemp" class="easyui-numberbox" required="true" hidden
+            <input id="InvoiceAmountTemp" name="InvoiceAmountTemp" class="easyui-numberbox" type="hidden"
                    data-options="groupSeparator:'.',decimalSeparator:',', precision:2"/>
         </div>
     </form>
@@ -141,7 +141,7 @@
 
         if(rows.length<1)
         {            
-            $.messager.alert('Peringatan','Data Belum Dipilih !','warning');
+            $.messager.alert('Info','Data Belum Dipilih !','info');
         }
         else if(rows.length<2)
         {            

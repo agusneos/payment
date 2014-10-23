@@ -13,8 +13,8 @@ class M_hutang_supplier extends CI_Model
     function cetak_hutang_supplier_summary()
     {       
         $sql        = 'SELECT Name,
-                        SUM(IF(CurrencyCode = "IDR","",IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
-                        SUM(IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
+                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
+                        SUM(IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
@@ -48,8 +48,8 @@ class M_hutang_supplier extends CI_Model
     {       
         $sql        = 'SELECT Name, MONTH(InvoiceDate) AS Bulan,
                         YEAR(InvoiceDate) AS Tahun,
-                        SUM(IF(CurrencyCode = "IDR","",IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
-                        SUM(IF (Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
+                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
+                        SUM(IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 

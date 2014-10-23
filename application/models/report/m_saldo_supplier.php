@@ -2,7 +2,9 @@
  
 class M_saldo_supplier extends CI_Model
 {    
-    static $table = 'VendInvoiceJour';
+    static $table   = 'VendInvoiceJour';
+    static $voucher = 'Voucher';
+    static $vendor  = 'Vendor';
     
     public function __construct() {
         parent::__construct();
@@ -31,17 +33,21 @@ class M_saldo_supplier extends CI_Model
         
         $this->db->query('SELECT @s:=0');
         $this->db->query('SELECT @t:=0');
-        $this->db->query('SELECT OrderAccount, PaymentDate, PaymentNumber, Note,
+        $this->db->query('SELECT Name, PaymentDate, PaymentNumber, Note,
                     DebetUSD, DebetIDR, KreditUSD, KreditIDR, 
                     @s:=@s+KreditUSD-DebetUSD as saldo_usd, @t:=@t+KreditIDR-DebetIDR as saldo_IDR
-                    FROM voucher
+                    FROM '.static::$voucher.'
+                    LEFT JOIN '.static::$vendor.'
+                        ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND YEAR(PaymentDate) < '.$tahun.'
                     ORDER BY PaymentDate ASC;');     
   
-        return $this->db->query('SELECT OrderAccount, PaymentDate, PaymentNumber, Note,
+        return $this->db->query('SELECT Name, PaymentDate, PaymentNumber, Note,
                     DebetUSD, DebetIDR, KreditUSD, KreditIDR, 
                     @s:=@s+KreditUSD-DebetUSD as saldo_usd, @t:=@t+KreditIDR-DebetIDR as saldo_IDR
-                    FROM voucher
+                    FROM '.static::$voucher.'
+                    LEFT JOIN '.static::$vendor.'
+                        ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND YEAR(PaymentDate) = '.$tahun.'
                     ORDER BY PaymentDate ASC;');
     }

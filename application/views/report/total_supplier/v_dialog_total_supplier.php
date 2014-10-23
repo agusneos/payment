@@ -28,7 +28,7 @@
     <form id="fm-dialog_total_supplier" method="post" novalidate buttons="#dlg_btn-dialog_total_supplier">
         <div class="fitem">
             <label for="type">Bulan</label>
-            <select id="bulan" name="bulan" class="easyui-combobox" style="width:100px;" required>
+            <select id="bulan2" name="bulan2" class="easyui-combobox" style="width:100px;" required>
                 <option value="0"></option>
                 <option value="1">Januari</option>
                 <option value="2">Februari</option>
@@ -46,14 +46,14 @@
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
-            <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
+            <input id="tahun3" name="tahun3" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
         </div>
     </form>
 
 <!-- Dialog Button -->
 <div id="dlg_btn-dialog_total_supplier">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="cetak_total_supplier()">Cetak</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="cetak_total_supplier()">Cetak</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
@@ -62,9 +62,9 @@
         var isValid = $('#fm-dialog_total_supplier').form('validate');
         if (isValid)
         {         
-            var bulan   = $('#bulan').combobox('getValue');
-            var tahun   = $('#tahun').numberbox('getValue');            
-            var periode = bulan+'-'+tahun;
+            var bulan2   = $('#bulan2').combobox('getValue');
+            var tahun3   = $('#tahun3').numberbox('getValue');            
+            var periode = bulan2+'-'+tahun3;
             
             var url = '<?php echo site_url('report/total_supplier/cetak_total_supplier'); ?>/' + periode;
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';

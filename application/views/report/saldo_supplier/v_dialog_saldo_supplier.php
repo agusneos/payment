@@ -34,14 +34,14 @@
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
-            <input id="tahun" name="tahun" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true" style="width:100px;" />
+            <input id="tahun2" name="tahun2" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true" style="width:100px;" />
         </div>
     </form>
 
 <!-- Dialog Button -->
 <div id="dlg_btn-dialog_saldo_supplier">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="cetak_saldo_supplier()">Cetak</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="cetak_saldo_supplier()">Cetak</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
@@ -50,9 +50,9 @@
         var isValid = $('#fm-dialog_saldo_supplier').form('validate');
         if (isValid)
         {           
-            var tahun   = $('#tahun').numberbox('getValue');            
+            var tahun2   = $('#tahun2').numberbox('getValue');            
             var vendor  = $('#vendor').combobox('getValue');
-            var vt      = vendor+'-'+tahun;
+            var vt      = vendor+'-'+tahun2;
             var url     = '<?php echo site_url('report/saldo_supplier/cetak_saldo_supplier'); ?>/' + vt;
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
             var title   = vt;
