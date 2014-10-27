@@ -35,21 +35,7 @@ class M_total_supplier extends CI_Model
                              
                        ORDER BY Vendor.Name ASC, SalesBalance DESC';
         return $this->db->query($sql);
-        /*
-        $this->db->select('SUM(VendInvoiceJour.SalesBalance) AS SalesBalance,                        
-                        SUM(VendInvoiceJour.SumTax) AS SumTax,
-                        SUM(VendInvoiceJour.InvoiceAmount) AS InvoiceAmount,
-                        VendInvoiceJour.InvoiceDate,
-                        Vendor.*');
-        $this->db->join('Vendor', 'VendInvoiceJour.OrderAccount = Vendor.Id', 'left');
-        $this->db->where('Vendor.VendGroup', $group)
-                 ->where('MONTH(VendInvoiceJour.InvoiceDate)', $bulan)
-                 ->where('YEAR(VendInvoiceJour.InvoiceDate)', $tahun);
-        $this->db->group_by('VendInvoiceJour.OrderAccount');  
-        $this->db->order_by('Vendor.Name', 'ASC');
-        return $this->db->get(self::$table);
-         * 
-         */
+        
     }
        
     

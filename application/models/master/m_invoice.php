@@ -54,7 +54,6 @@ class M_invoice extends CI_Model
                             IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
-       // $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
 
@@ -62,7 +61,6 @@ class M_invoice extends CI_Model
                             IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
-       // $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -79,36 +77,16 @@ class M_invoice extends CI_Model
         
         return json_encode($result);          
     }
-    
-    function update($InvoiceId)
-    {    
-        $this->db->where('InvoiceId', $InvoiceId);
-        return $this->db->update(self::$table,array(            
-            'CheckDate' =>$this->input->post('CheckDate',true)
-        ));
-    }
         
-    function delete($InvoiceId)
-    {
-        return $this->db->delete(self::$table, array('InvoiceId' => $InvoiceId)); 
-    }
-    
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                     $SalesBalance, $CurrencyCode, $ExchRate)
-    {        
-       /* return $this->db->simple_query('INSERT INTO vendinvoicejour 
-            VALUES ("'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
-                .$SalesBalance.',"'.$CurrencyCode.'",'.$ExchRate.',
-                "0000-00-00 00:00:00", '.$SalesBalance.')');
-        * 
-        */
-        
-          return $this->db->simple_query('INSERT INTO vendinvoicejour (OrderAccount, InvoiceId, InvoiceDate,
-            Qty, SalesBalance, Tax, CurrencyCode, ExchRate, CheckDate, PaymentSisa) 
-            SELECT "'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
-                .$SalesBalance.',Tax,"'.$CurrencyCode.'",'.$ExchRate.',
-                "0000-00-00 00:00:00", '.$SalesBalance.' 
-            FROM Vendor WHERE Id = "'.$OrderAccount.'"');
+    {      
+        return $this->db->simple_query('INSERT INTO vendinvoicejour (OrderAccount, InvoiceId, InvoiceDate,
+                Qty, SalesBalance, Tax, CurrencyCode, ExchRate, CheckDate, PaymentSisa) 
+                SELECT "'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
+                    .$SalesBalance.',Tax,"'.$CurrencyCode.'",'.$ExchRate.',
+                    "0000-00-00 00:00:00", '.$SalesBalance.' 
+                FROM Vendor WHERE Id = "'.$OrderAccount.'"');
 
     }
     
@@ -117,9 +95,6 @@ class M_invoice extends CI_Model
         $bulan  = $this->input->post('bulan1',true);
         $tahun  = $this->input->post('tahun1',true);
         $rate   = $this->input->post('rate1',true);
-        
-    //    return $this->db->simple_query('UPDATE '.self::$table.' SET ExchRate='.$rate.' WHERE
-     //       CurrencyCode="USD" AND MONTH(InvoiceDate)='.$bulan.' AND YEAR(InvoiceDate)='.$tahun);
         
         $this->db->where('CurrencyCode', 'USD')
                  ->where('MONTH(InvoiceDate)', $bulan)

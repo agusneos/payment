@@ -7,7 +7,7 @@ class Number_sequence extends CI_Controller {
         $this->load->model('setting/m_number_sequence','record');
     }
     
-    public function index()
+    function index()
     {
         $auth       = new Auth();
          // mencegah user yang belum login untuk mengakses halaman ini
@@ -19,15 +19,18 @@ class Number_sequence extends CI_Controller {
             $this->load->view('setting/v_number_sequence');        
     }
     
-    public function update($id=null)
+    function update($id=null)
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         if($this->record->update($id))
             echo json_encode(array('success'=>true));
         else
-            echo json_encode(array('msg'=>'Gagal mengubah data'));
+            echo json_encode(array('success'=>false));
     }
 }
 

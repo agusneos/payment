@@ -22,10 +22,14 @@ function save_admin_user(){
             if(result.success){
                 $('#dlg-admin_user').dialog('close');
                 $('#grid-admin_user').datagrid('reload');
+                $.messager.show({
+                    title: 'Info',
+                    msg: 'Input Data Berhasil'
+                });
             } else {
                 $.messager.show({
                     title: 'Error',
-                    msg: result.msg
+                    msg: 'Input Data Gagal'
                 });
             }
         }
@@ -38,6 +42,10 @@ function update_admin_user(){
         $('#dlg_update-admin_user').dialog({modal: true}).dialog('open').dialog('setTitle','Edit Data');
         $('#fm_update-admin_user').form('load',row);
         url = '<?php echo site_url('admin/user/update'); ?>/' + row.id;
+    }
+    else
+    {
+         $.messager.alert('Info','Data belum dipilih !','info');
     }
 }
 
@@ -52,10 +60,14 @@ function save_update_admin_user(){
             if(result.success){
                 $('#dlg_update-admin_user').dialog('close');
                 $('#grid-admin_user').datagrid('reload');
+                $.messager.show({
+                    title: 'Info',
+                    msg: 'Ubah Data Berhasil'
+                });
             } else {
                 $.messager.show({
                     title: 'Error',
-                    msg: result.msg
+                    msg: 'Ubah Data Gagal'
                 });
             }
         }
@@ -68,6 +80,10 @@ function reset_admin_user(){
         $('#dlg_reset-admin_user').dialog({modal: true}).dialog('open').dialog('setTitle','Reset Password');
         $('#fm_reset-admin_user').form('reset');
         url = '<?php echo site_url('admin/user/reset'); ?>/' + row.id;
+    }
+    else
+    {
+         $.messager.alert('Info','Data belum dipilih !','info');
     }
 }
 
@@ -84,12 +100,12 @@ function save_reset_admin_user(){
                 $('#grid-admin_user').datagrid('reload');
                 $.messager.show({
                     title: 'Info',
-                    msg: 'Password Changed'
+                    msg: 'Ubah Password Berhasil'
                 });
             } else {
                 $.messager.show({
                     title: 'Error',
-                    msg: result.msg
+                    msg: 'Ubah Password Gagal'
                 });
             }
         }
@@ -104,18 +120,30 @@ function delete_admin_user(){
                 $.post('<?php echo site_url('admin/user/delete'); ?>',{id:row.id},function(result){
                     if (result.success){
                         $('#grid-admin_user').datagrid('reload');
+                        $.messager.show({
+                            title: 'Info',
+                            msg: 'Hapus Data Berhasil'
+                        });
                     } else {
                         $.messager.show({
                             title: 'Error',
-                            msg: result.msg
+                            msg: 'Hapus Data Gagal'
                         });
                     }
                 },'json');
             }
         });
     }
+    else
+    {
+         $.messager.alert('Info','Data belum dipilih !','info');
+    }
 }
 
+function refresh()
+{
+    $('#grid-admin_user').datagrid('reload');
+}
 
 </script>
 <style type="text/css">
@@ -149,9 +177,10 @@ function delete_admin_user(){
 
 <!-- Data Grid -->
 <table id="grid-admin_user" toolbar="#toolbar-admin_user"
-    data-options="pageSize:50, singleSelect:true, fit:true, fitColumns:true">
+    data-options="pageSize:50, rownumbers:true, singleSelect:true, fit:true, fitColumns:true">
     <thead>
-        <tr>              
+        <tr>
+            <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'id'" width="30" align="center" sortable="true">ID</th>
             <th data-options="field:'name'" width="100" halign="center" sortable="true">Nama Lengkap</th>
             <th data-options="field:'username'" width="50" align="center" sortable="true">Username</th>
@@ -175,6 +204,7 @@ function delete_admin_user(){
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update_admin_user()">Edit Data</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delete_admin_user()">Hapus Data</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="reset_admin_user()">Reset Password</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="refresh()">Refresh</a>
 </div>
 
 <!-- Dialog Input Form -->
@@ -182,19 +212,19 @@ function delete_admin_user(){
     <form id="fm-admin_user" method="post" novalidate>        
         <div class="fitem">
             <label for="type">Nama Lengkap</label>
-            <input type="text" name="name" class="easyui-validatebox" required="true"/>
+            <input type="text" name="name" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Username</label>
-            <input type="text" name="username" class="easyui-validatebox" required="true"/>
+            <input type="text" name="username" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Password</label>
-            <input id="pass" type="password" name="password" class="easyui-validatebox" required="true"/>
+            <input id="pass" type="password" name="password" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Level</label>
-            <input type="text" name="level" class="easyui-validatebox" required="true"/>
+            <input type="text" name="level" class="easyui-textbox" required="true"/>
         </div>
     </form>
 </div>
@@ -203,15 +233,15 @@ function delete_admin_user(){
     <form id="fm_update-admin_user" method="post" novalidate>        
         <div class="fitem">
             <label for="type">Nama Lengkap</label>
-            <input type="text" name="name" class="easyui-validatebox" required="true"/>
+            <input type="text" name="name" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Username</label>
-            <input type="text" name="username" class="easyui-validatebox" required="true"/>
+            <input type="text" name="username" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Level</label>
-            <input type="text" name="level" class="easyui-validatebox" required="true"/>
+            <input type="text" name="level" class="easyui-textbox" required="true"/>
         </div>
     </form>
 </div>
@@ -220,25 +250,25 @@ function delete_admin_user(){
     <form id="fm_reset-admin_user" method="post" novalidate>       
         <div class="fitem">
             <label for="type">New Password</label>
-            <input id="pass" type="password" name="password" class="easyui-validatebox" required="true"/>
+            <input id="pass" type="password" name="password" class="easyui-textbox" required="true"/>
         </div>        
     </form>
 </div>
 
 <!-- Dialog Input Button -->
 <div id="dlg_buttons-admin_user">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="save_admin_user()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-admin_user').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="save_admin_user()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-admin_user').dialog('close')">Batal</a>
 </div>
 <!-- Dialog Update Button -->
 <div id="dlg_buttons_update-admin_user">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="save_update_admin_user()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg_update-admin_user').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="save_update_admin_user()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg_update-admin_user').dialog('close')">Batal</a>
 </div>
 <!-- Dialog Reset Button -->
 <div id="dlg_buttons_reset-admin_user">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="save_reset_admin_user()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg_reset-admin_user').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="save_reset_admin_user()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg_reset-admin_user').dialog('close')">Batal</a>
 </div>
 
 <!-- End of file v_user.php -->

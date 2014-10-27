@@ -9,35 +9,33 @@ class Hutang_supplier extends CI_Controller {
     
     function index()
     {
-        $auth = new Auth();
-
+        $auth   = new Auth();
         $auth->restrict();
+        
         //$auth->cek_menu(14);
         $this->load->view('report/hutang_supplier/v_dialog_hutang_supplier.php');
     }
     
     function cetak_hutang_supplier_summary()
     {
-        $auth = new Auth();
-
+        $auth   = new Auth();
         $auth->restrict();
+        
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        //$id = $this->uri->segment(4);
         $data['rows'] = $this->record->cetak_hutang_supplier_summary();
         $this->load->view('report/hutang_supplier/v_hutang_supplier_summary.php',$data);
     }
     
     function cetak_hutang_supplier_detail()
     {
-        $auth = new Auth();
-
+        $auth   = new Auth();
         $auth->restrict();
+        
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        //$id = $this->uri->segment(4);
         $data['rows'] = $this->record->cetak_hutang_supplier_detail();
         $this->load->view('report/hutang_supplier/v_hutang_supplier_detail.php',$data);
     }

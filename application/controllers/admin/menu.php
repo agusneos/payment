@@ -7,7 +7,7 @@ class Menu extends CI_Controller {
         $this->load->model('admin/m_menu','record');
     }
     
-    public function index()
+    function index()
     {
         $auth       = new Auth();
          // mencegah user yang belum login untuk mengakses halaman ini
@@ -19,55 +19,83 @@ class Menu extends CI_Controller {
             $this->load->view('admin/v_menu');        
     }
     
-    public function getParent()
+    function getParent()
     {        
-        echo $this->record->getParent();       
-      
+        $auth   = new Auth();
+        $auth->restrict();
+        
+        echo $this->record->getParent();      
     }
     
-    public function getUser()
+    function getUser()
     {        
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->getUser();       
-      
     }
     
-    public function enumType()
+    function enumType()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->enumField('menu', 'type');
     }
     
-    public function create()
+    function create()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         if($this->record->create())
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal memasukkan data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }     
     
-    public function update($id=null)
+    function update($id=null)
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         if($this->record->update($id))
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal mengubah data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }
         
-    public function delete()
+    function delete()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         $id = intval(addslashes($_POST['id']));
         if($this->record->delete($id))
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal menghapus data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }
                
 }

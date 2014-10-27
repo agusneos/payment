@@ -194,22 +194,20 @@
             success: function(result){
                 var result = eval('('+result+')');
                 if(result.success)
-                {
-                    
+                {                    
                     $('#dlg-updateRate').dialog('close');
                     $('#grid-master_invoice').datagrid('reload');
                     $.messager.show({
-                            title: 'Info',
-                           // msg: result.total + ' ' +result.ok + ' ' + result.ng
-                            msg: 'Sukses'
-                            });
+                        title: 'Info',
+                        msg: 'Ubah Rate Berhasil'
+                    });
                 } 
                 else 
                 {
                     $.messager.show({
-                        title: 'Error',
-                        msg: result.msg
-                    });
+                    title: 'Error',
+                    msg: 'Ubah Rate Gagal'
+                });
                 }
             }
         });
@@ -244,9 +242,9 @@
                 else 
                 {
                     $.messager.show({
-                        title: 'Error',
-                        msg: result.msg
-                    });
+                    title: 'Error',
+                    msg: 'Upload Data Gagal'
+                });
                 }
             }
         });

@@ -7,8 +7,11 @@ class Menu extends CI_Controller {
         $this->load->model('m_menu','record');
     }
     
-    public function index()
-    {        
+    function index()
+    {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         $id = $this->session->userdata('id');
         echo $this->record->ambil_menu($id);               
     }

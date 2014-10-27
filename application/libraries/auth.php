@@ -53,7 +53,7 @@ class Auth{
     {
         if($this->is_logged_in() == false)
         {
-            redirect('welcome/login');
+            redirect('');
         }
     }
     // untuk mengecek menu

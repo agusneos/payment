@@ -37,14 +37,12 @@
 
     function check()    
     {
-        // var ss = [];
         var rows = $('#grid-transaksi_check').datagrid('getSelections');
         if(rows.length>0)
         {
             for(var i=0; i<rows.length; i++)
             {
                 var row = rows[i];
-                //ss.push('<span>'+row.Qty+":"+row.Qty+":"+row.Qty+'</span>');
                 $.post('<?php echo site_url('transaksi/check/update'); ?>',
                     {InvoiceId      : row.InvoiceId,
                      SalesBalance   : row.SalesBalance,
@@ -57,15 +55,12 @@
                      InvoiceAmount:row.InvoiceAmount,
                      CurrencyCode:row.CurrencyCode, 
                      ExchRate:row.ExchRate},'json');
-                //$.messager.alert('Info', row.InvoiceId);
-               /* $.messager.show({
-                            title: 'Info',
-                            msg: success
-                            });
-                            */
             }
-            // $.messager.alert('Info', ss.join('<br/>'));
             $('#grid-transaksi_check').datagrid('reload');
+            $.messager.show({
+                title: 'Info',
+                msg: 'Check Data Berhasil'
+            });
         }
         else
         {

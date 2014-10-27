@@ -29,11 +29,11 @@
     },{
         text:'Delete',
         iconCls:'icon-cancel',
-        handler:function(){masterVendorHapus()}
+        handler:function(){masterVendorHapus();}
     },{
         text:'Refresh',
         iconCls:'icon-reload',
-        handler:function(){$('#grid-master_vendor').datagrid('reload')}
+        handler:function(){$('#grid-master_vendor').datagrid('reload');}
     }];
     
     $('#grid-master_vendor').datagrid({view:scrollview,remoteFilter:true,
@@ -51,8 +51,7 @@
         if(row){
             $('#dlg-master_vendor-edit').dialog({modal: true}).dialog('open').dialog('setTitle','Edit Data');
             $('#fm-master_vendor-edit').form('load',row);
-            url = '<?php echo site_url('master/vendor/update'); ?>/' + row.Id;
-            
+            url = '<?php echo site_url('master/vendor/update'); ?>/' + row.Id;            
         }
         else
         {
@@ -71,10 +70,14 @@
                 if(result.success){
                     $('#dlg-master_vendor').dialog('close');
                     $('#grid-master_vendor').datagrid('reload');
+                    $.messager.show({
+                        title: 'Info',
+                        msg: 'Input Data Berhasil'
+                    });
                 } else {
                     $.messager.show({
                         title: 'Error',
-                        msg: result.msg
+                        msg: 'Input Data Gagal'
                     });
                 }
             }
@@ -92,10 +95,14 @@
                 if(result.success){
                     $('#dlg-master_vendor-edit').dialog('close');
                     $('#grid-master_vendor').datagrid('reload');
+                    $.messager.show({
+                        title: 'Info',
+                        msg: 'Ubah Data Berhasil'
+                    });
                 } else {
                     $.messager.show({
                         title: 'Error',
-                        msg: result.msg
+                        msg: 'Ubah Data Gagal'
                     });
                 }
             }
@@ -110,10 +117,14 @@
                     $.post('<?php echo site_url('master/vendor/delete'); ?>',{Id:row.Id},function(result){
                         if (result.success){
                             $('#grid-master_vendor').datagrid('reload');
+                            $.messager.show({
+                                title: 'Info',
+                                msg: 'Hapus Data Berhasil'
+                            });
                         } else {
                             $.messager.show({
                                 title: 'Error',
-                                msg: result.msg
+                                msg: 'Hapus Data Gagal'
                             });
                         }
                     },'json');
@@ -223,8 +234,8 @@
 
 <!-- Dialog Button -->
 <div id="dlg-buttons-master_vendor-edit">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="masterVendorSaveEdit()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-master_vendor-edit').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="masterVendorSaveEdit()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-master_vendor-edit').dialog('close')">Batal</a>
 </div>
 <!-- End of file v_vendor.php -->
 <!-- Location: ./application/views/master/v_vendor.php -->

@@ -22,12 +22,16 @@ function save_number_sequence(){
         success: function(result){
             var result = eval('('+result+')');
             if(result.success){
-                $('#dlg-number_sequence').dialog('close');
-                $('#grid-number_sequence').datagrid('reload');
+            $('#dlg-number_sequence').dialog('close');
+            $('#grid-number_sequence').datagrid('reload');
+            $.messager.show({
+                    title: 'Info',
+                    msg: 'Input/Ubah Data Berhasil'
+                });
             } else {
                 $.messager.show({
                     title: 'Error',
-                    msg: result.msg
+                    msg: 'Input/Ubah Data Gagal'
                 });
             }
         }

@@ -18,14 +18,17 @@ class Saldo_supplier extends CI_Controller {
 
     function get_supp()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->get_supp();
     }
     
     function cetak_saldo_supplier()
     {
-        $auth = new Auth();
-
+        $auth   = new Auth();
         $auth->restrict();
+        
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));

@@ -100,12 +100,12 @@
                         $('#dlg-reset_main').dialog('close');
                         $.messager.show({
                             title: 'Info',
-                            msg: 'Password Changed'
+                            msg: 'Ubah Password Berhasil'
                         });
                     } else {
                         $.messager.show({
                             title: 'Error',
-                            msg: result.msg
+                            msg: 'Ubah Password Gagal'
                         });
                     }
                 }
@@ -141,37 +141,12 @@
         <!-- Top -->
         <div data-options="region:'north',border:true,split:false" style="height:34px;height:28px;" > 
             <div class="easyui-layout" data-options="fit:true" >
-         <!--       <div data-options="region:'east',split:false,border:true" style="width:300px;background-color:#daeef5">                   
-                    <div align='right' >
-                        <a href="javascript:void(0)" class="easyui-menubutton" id="clock" menu="#mm2" data-options="plain:true,iconCls:'icon-user'" >
-                            <?php echo $this->session->userdata('nama');?>,
-                            <?php 
-                            setlocale (LC_TIME, 'INDONESIAN');
-                            $st = strftime( "%A, %d %B %Y", strtotime(date('d-F-Y')));
-                            echo $st;
-                            ?>
-                        </a>
-                        <div id="mm2" style="width:200px;">
-                            <div iconCls="icon-undo" onclick="mainReset()">Reset Password</div>
-                            <div class="menu-sep"></div>
-                            <div href="<?php echo site_url('main/logout'); ?>" iconCls="icon-logout">Logout</div>
-                        </div>
-                    </div>            
-                </div>
-         -->
                 <div data-options="region:'east',split:false,border:false" style="width:250px;background-color:#daeef5">
                     <div align='right' >        
                         <a href="javascript:void(0)" class="easyui-linkbutton" id="clock" data-options="plain:true,iconCls:'icon-time'">                            
                         </a>           
                     </div>
                 </div>
-         
-         <!--       <div data-options="region:'center',split:false,border:true" style="background-color:#daeef5">
-                    <div>        
-                        <a href="javascript:void(0)" onclick="dashboardTab('Dashboard')" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-dashboard'">Dashboard</a>           
-                    </div>
-                </div>
-         -->
                 <div data-options="region:'center',split:false,border:false" style="width:150px;background-color:#daeef5">                   
                     <div align='left' >
                         <a href="javascript:void(0)" class="easyui-menubutton" menu="#mm2" data-options="plain:true,iconCls:'icon-user'" >
@@ -235,7 +210,6 @@
         curr_hour=checkTime(curr_hour);
         curr_min=checkTime(curr_min);
         curr_sec=checkTime(curr_sec);
-        //document.getElementById('clock').innerHTML=curr_hour+":"+curr_min+":"+curr_sec;
         $('#clock').linkbutton({text:thisDay + ', ' + day + ' ' + months[month] + ' ' + year + ' - ' + curr_hour+":"+curr_min+":"+curr_sec});
     }
     function checkTime(i) {
@@ -251,14 +225,14 @@
         <form id="fm-reset_main" method="post" novalidate>       
             <div class="fitem">
                 <label for="type">New Password</label>
-                <input id="pass" type="password" name="password" class="easyui-validatebox" required="true"/>
+                <input id="pass" type="password" name="password" class="easyui-textbox" required="true"/>
             </div>        
         </form>
     </div>
     <!-- Dialog Reset Button -->
     <div id="dlg-buttons-reset_main">
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="mainResetSave()">Simpan</a>
-        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-reset_main').dialog('close')">Batal</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="mainResetSave()">Simpan</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-reset_main').dialog('close')">Batal</a>
     </div>
     
 </body>

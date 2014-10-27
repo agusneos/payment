@@ -57,7 +57,6 @@ class M_payment extends CI_Model
         $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentSisa !=', 0);
-      //  $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
@@ -67,7 +66,6 @@ class M_payment extends CI_Model
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PaymentSisa !=', 0);
-       // $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -77,29 +75,10 @@ class M_payment extends CI_Model
         {
             array_push($data, $row); 
         }
-        
-        /*$this->db->select('SUM(Qty) AS Qty, SUM(SalesBalance) AS SalesBalance, 
-                        SUM(0) AS InvoiceAmount, SUM(0) AS ExchRate, 
-                        SUM(InvoiceRoundOff) AS InvoiceRoundOff, SUM(SumTax) AS SumTax, 
-                        SUM(InvoiceAmountMST) AS InvoiceAmountMST');
-         $this->db->where($cond, NULL, FALSE)
-                 ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 //->where('PaymentNumber', '');
-                 ->where('PaymentSisa !=', 0);
-        $query2  = $this->db->get(self::$table);
-        
-        $data2 = array();
-        foreach ( $query2->result() as $row2 )
-        {
-            array_push($data2, $row2); 
-        }   
-         * 
-         */
  
         $result = array();
 	$result['total']    = $total;
 	$result['rows']     = $data;
-        //$result['footer']   = $data2;
         
         return json_encode($result);          
     }
@@ -122,8 +101,6 @@ class M_payment extends CI_Model
         
         $DebetUSD           = 0;
         $DebetIDR           = 0;
-       // $KreditUSD          = 0;
-       // $KreditIDR          = 0;
         
         if ( $InvoiceAmount >= 0 )
         {
@@ -145,15 +122,12 @@ class M_payment extends CI_Model
         {
             if ( $CurrencyCode == 'IDR')
             {
-                //$KreditIDR  = $InvoiceAmount;
                 $PaymentNumber  = '';
                 $Note           = $Nt;
                 $DebetIDR       = $InvoiceAmount * -1;    
             }
             else
             {
-               // $KreditUSD  = round($InvoiceAmount, 2);
-                //$KreditIDR  = $KreditUSD * $ExchRate;
                 $PaymentNumber  = '';
                 $Note           = $Nt;
                 $DebetUSD       = round($InvoiceAmount, 2) * -1;
@@ -167,27 +141,9 @@ class M_payment extends CI_Model
             'PaymentDate'       => $this->input->post('PaymentDate',true),
             'Note'              => $Note,
             'DebetUSD'          => round($DebetUSD, 2),
-            'DebetIDR'          => round($DebetIDR, 0),
-          //  'KreditUSD'         => round($KreditUSD, 2),
-           // 'KreditIDR'         => round($KreditIDR, 0),            
+            'DebetIDR'          => round($DebetIDR, 0),          
         ));
     }
-    
-    /*function createVoucher()
-    {
-        return $this->db->insert(self::$voucher,array(
-            'OrderAccount'      =>  $this->input->post('OrderAccount',true),
-            'PaymentNumber'     =>  $this->input->post('PaymentNumber',true),
-            'PaymentDate'       =>  $this->input->post('PaymentDate',true),
-            'CurrencyCode'      =>  $this->input->post('CurrencyCode',true),
-            'ExchRate'          =>  $this->input->post('ExchRate',true),
-            'InvoiceAmount'     =>  $this->input->post('InvoiceAmount',true),
-            'InvoiceAmountMST'  =>  $this->input->post('InvoiceAmountMST',true),
-            'PaymentCreateDate' =>  $this->input->post('PaymentCreateDate',true),
-        ));
-    }
-     * 
-     */
     
     function createVoucherInvoice()
     {

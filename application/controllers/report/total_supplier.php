@@ -18,14 +18,17 @@ class Total_supplier extends CI_Controller {
 
     function get_dept()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->get_dept();
     }
     
     function cetak_total_supplier()
     {
-        $auth = new Auth();
-
+        $auth   = new Auth();
         $auth->restrict();
+        
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));

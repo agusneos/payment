@@ -21,45 +21,72 @@ class Vendor extends CI_Controller {
     
     function create()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         if($this->record->create())
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal memasukkan data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }     
     
     function update($Id=null)
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         if($this->record->update($Id))
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal mengubah data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }
         
     function delete()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         if(!isset($_POST))	
             show_404();
 
         $Id = addslashes($_POST['Id']);
         if($this->record->delete($Id))
+        {
             echo json_encode(array('success'=>true));
+        }
         else
-            echo json_encode(array('msg'=>'Gagal menghapus data'));
+        {
+            echo json_encode(array('success'=>false));
+        }
     }
     
     function enumVendGroup()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->enumField('VendGroup');
     }
     
     function enumTax()
     {
+        $auth   = new Auth();
+        $auth->restrict();
+        
         echo $this->record->enumField('Tax');
     }
                 

@@ -18,6 +18,10 @@ function update_admin_menu(){
         $('#fm-admin_menu').form('load',row);
         url = '<?php echo site_url('admin/menu/update'); ?>/' + row.id;
     }
+    else
+    {
+         $.messager.alert('Info','Data belum dipilih !','info');
+    }
 }
 
 function save_admin_menu(){
@@ -31,10 +35,14 @@ function save_admin_menu(){
             if(result.success){
                 $('#dlg-admin_menu').dialog('close');
                 $('#grid-admin_menu').datagrid('reload');
+                $.messager.show({
+                    title: 'Info',
+                    msg: 'Input/Ubah Data Berhasil'
+                });
             } else {
                 $.messager.show({
                     title: 'Error',
-                    msg: result.msg
+                    msg: 'Input/Ubah Data Gagal'
                 });
             }
         }
@@ -49,17 +57,31 @@ function delete_admin_menu(){
                 $.post('<?php echo site_url('admin/menu/delete'); ?>',{id:row.id},function(result){
                     if (result.success){
                         $('#grid-admin_menu').datagrid('reload');
+                        $.messager.show({
+                            title: 'Info',
+                            msg: 'Hapus Data Berhasil'
+                        });
                     } else {
                         $.messager.show({
                             title: 'Error',
-                            msg: result.msg
+                            msg: 'Hapus Data Gagal'
                         });
                     }
                 },'json');
             }
         });
     }
+    else
+    {
+         $.messager.alert('Info','Data belum dipilih !','info');
+    }
 }
+
+function refresh()
+{
+    $('#grid-admin_menu').datagrid('reload');
+}
+
 </script>
 <style type="text/css">
     #fm-admin_menu{
@@ -84,11 +106,12 @@ function delete_admin_menu(){
 
 <!-- Data Grid -->
 <table id="grid-admin_menu" toolbar="#toolbar-admin_menu"
-    data-options="pageSize:50, singleSelect:true, fit:true, fitColumns:true">
+    data-options="pageSize:50, rownumbers:true, singleSelect:true, fit:true, fitColumns:true">
     <thead>
-        <tr>              
+        <tr>
+            <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'id'" width="30" align="center" sortable="true">ID</th>            
-            <th data-options="field:'parentId'" width="30" align="center" sortable="true">Parent Menu</th>
+            <th data-options="field:'parentId'" width="50" align="center" sortable="true">Parent Menu</th>
             <th data-options="field:'name'" width="100" halign="center" sortable="true">Nama Menu</th>
             <th data-options="field:'uri'" width="100" halign="center" sortable="true">URI</th>
             <th data-options="field:'allowed'" width="100" halign="center" sortable="true">Allowed</th>
@@ -107,6 +130,7 @@ function delete_admin_menu(){
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="create_admin_menu()">Tambah Data</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="update_admin_menu()">Edit Data</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delete_admin_menu()">Hapus Data</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="refresh()">Refresh</a>
 </div>
 
 <!-- Dialog Form -->
@@ -120,19 +144,19 @@ function delete_admin_menu(){
         </div>
         <div class="fitem">
             <label for="type">Nama Menu</label>
-            <input type="text" name="name" class="easyui-validatebox" required="true"/>
+            <input type="text" name="name" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">URI</label>
-            <input type="text" name="uri" class="easyui-validatebox" />
+            <input type="text" name="uri" class="easyui-textbox" />
         </div>
         <div class="fitem">
             <label for="type">Allowed</label>
-            <input type="text" name="allowed" class="easyui-validatebox" required="true"/>
+            <input type="text" name="allowed" class="easyui-textbox" required="true"/>
         </div>
         <div class="fitem">
             <label for="type">Icon</label>
-            <input type="text" name="iconCls" class="easyui-validatebox" />
+            <input type="text" name="iconCls" class="easyui-textbox" />
         </div>
         <div class="fitem">
             <label for="type">Type</label>
@@ -145,8 +169,8 @@ function delete_admin_menu(){
 
 <!-- Dialog Button -->
 <div id="dlg_buttons-admin_menu">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="save_admin_menu()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-admin_menu').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="save_admin_menu()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-admin_menu').dialog('close')">Batal</a>
 </div>
 
 <!-- End of file v_menu.php -->

@@ -129,8 +129,8 @@
 
 <!-- Dialog Button -->
 <div id="dlg_buttons-paid">
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="paidSave()">Simpan</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg-paid').dialog('close')">Batal</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="paidSave()">Simpan</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-paid').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
@@ -269,6 +269,10 @@
         }
         $('#dlg-paid').dialog('close');
         $('#grid-transaksi_payment').datagrid('reload');
+        $.messager.show({
+            title: 'Info',
+            msg: 'Update Data Berhasil'
+        });
     }
     
     function timestamp()
