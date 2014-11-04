@@ -34,7 +34,7 @@
                     {
                         $('#dlg').dialog({
                             title: title,
-                            width: 400,
+                            width: 500,
                             height: 250,
                             closed: true,
                             href: url,

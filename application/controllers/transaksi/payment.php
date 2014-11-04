@@ -56,6 +56,8 @@ class Payment extends CI_Controller {
         }
     }
     
+    
+    /*
     function createVoucherInvoice()
     {
         $auth   = new Auth();
@@ -81,7 +83,9 @@ class Payment extends CI_Controller {
         {
             echo json_encode(array('success'=>false));
         }
-    }   
+    }
+     * 
+     */   
 
 }
 

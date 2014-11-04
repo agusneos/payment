@@ -24,7 +24,7 @@ $pdf = new PDF();
 // variable awal
 date_default_timezone_set('Asia/Jakarta');
 $pdf->FPDF("P","cm","A4");
-$pdf->SetMargins(1,1,1);
+$pdf->SetMargins(0.7,1,1);
 //$pdf->AliasNbPages();
 $pdf->AddPage();
 
@@ -87,145 +87,80 @@ else
 {
     $pdf->Error('Data Tidak Ditemukan.');
 }
-$pdf->Ln($height*2);
+$pdf->Ln($height*3);
 
 // START LOKAL //
 
-$pdf->SetFont('Arial','',12);
-$pdf->Cell(0,$height*1.5,'LOKAL',0,0,'L');
-$pdf->Ln($height*1.5);
-$pdf->SetFont('Arial','',9);
-$pdf->Cell(0.7,$height,'NO',1,0,'C');
-$pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
-$pdf->Cell(3.5,$height,'DPP',1,0,'C');
-$pdf->Cell(3.5,$height,'PPN',1,0,'C');
-$pdf->Cell(3.5,$height,'TOTAL',1,0,'C');
-
-$noUrut             = 1;
-$SumSalesBalance    = 0;
-$SumTax             = 0;
-$SumInvoiceAmount   = 0;
-
-foreach($rows->result() as $data)
-{   
-    if ($data->CurrencyCode == 'IDR')
-    {
-        if ($data->SalesBalance < 0)
-        {
-            $pdf->SetTextColor(255, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TRB',0,'R');
-        }
-        else
-        {
-            $pdf->SetTextColor(0, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance), 0, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax)), 0, ',', '.'),'TRB',0,'R');
-        }       
-        
-        $noUrut++;
-        $SumSalesBalance    += round($data->SalesBalance);
-        $SumTax             += round(ppn($data->SalesBalance,$data->Tax));
-        $SumInvoiceAmount   += round(amount($data->SalesBalance,$data->Tax));
-    }  
-}
 
 $pdf->SetFont('Arial','B',9);
+$pdf->Cell(0.7,$height,'NO',1,0,'C');
+$pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
+$pdf->Cell(3,$height,'DPP USD',1,0,'C');
+$pdf->Cell(3,$height,'DPP IDR',1,0,'C');
+$pdf->Cell(3,$height,'PPN',1,0,'C');
+$pdf->Cell(3,$height,'TOTAL',1,0,'C');
+
+$noUrut     = 1;
+$SumDppUsd  = 0;
+$SumDppIdr  = 0;
+$SumPpn     = 0;
+$SumTotal   = 0;
+
+$pdf->SetFont('Arial','',8);
+foreach($rows->result() as $data)
+{  
+    if ($data->DPP_IDR < 0)
+    {
+        $pdf->SetTextColor(255, 0, 0);
+        $pdf->Ln();
+        $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
+        $pdf->Cell(7,$height,$data->Name,1,0,'L');
+        $pdf->Cell(0.7,$height,'$','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->DPP_USD, 2), 2, ',', '.') ,'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->DPP_IDR), 0, ',', '.') ,'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->PPN), 0, ',', '.'),'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->TOTAL), 0, ',', '.'),'TRB',0,'R');
+    }
+    else
+    {
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->Ln();
+        $pdf->Cell(0.7,$height,$noUrut,1,0,'C');
+        $pdf->Cell(7,$height,$data->Name,1,0,'L');
+        $pdf->Cell(0.7,$height,'$','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->DPP_USD, 2), 2, ',', '.') ,'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->DPP_IDR), 0, ',', '.') ,'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->PPN), 0, ',', '.'),'TB',0,'R');
+        $pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+        $pdf->Cell(2.3,$height,number_format(round($data->TOTAL), 0, ',', '.'),'TRB',0,'R');
+    }       
+
+    $noUrut++;
+    $SumDppUsd  += round($data->DPP_USD, 2);
+    $SumDppIdr  += round($data->DPP_IDR);
+    $SumPpn     += round($data->PPN);
+    $SumTotal   += round($data->TOTAL);
+      
+}
+
+$pdf->SetFont('Arial','B',8);
 $pdf->Ln($height);
 $pdf->Cell(7.7,$height,'TOTAL',1,0,'C');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumSalesBalance, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumTax, 0, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'Rp.','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumInvoiceAmount, 0, ',', '.'),'TRB',0,'R');
+$pdf->Cell(0.7,$height,'$','LTB',0,'L');
+$pdf->Cell(2.3,$height,number_format($SumDppUsd, 2, ',', '.'),'TB',0,'R');
+$pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+$pdf->Cell(2.3,$height,number_format($SumDppIdr, 0, ',', '.'),'TB',0,'R');
+$pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+$pdf->Cell(2.3,$height,number_format($SumPpn, 0, ',', '.'),'TB',0,'R');
+$pdf->Cell(0.7,$height,'Rp.','LTB',0,'L');
+$pdf->Cell(2.3,$height,number_format($SumTotal, 0, ',', '.'),'TRB',0,'R');
 
 // END LOKAL //
-// 
-////////////////////
-//
-// START IMPORT //
-
-$pdf->Ln($height*2);
-$pdf->SetFont('Arial','',12);
-$pdf->Cell(0,$height*1.5,'IMPORT',0,0,'L');
-$pdf->Ln($height*1.5);
-$pdf->SetFont('Arial','',9);
-$pdf->Cell(0.7,$height,'NO',1,0,'C');
-$pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
-$pdf->Cell(3.5,$height,'DPP',1,0,'C');
-$pdf->Cell(3.5,$height,'PPN',1,0,'C');
-$pdf->Cell(3.5,$height,'TOTAL',1,0,'C');
-
-$noUrutImport             = 1;
-$SumSalesBalanceImport    = 0;
-$SumTaxImport             = 0;
-$SumInvoiceAmountImport   = 0;
-
-foreach($rows->result() as $data)
-{   
-    if ($data->CurrencyCode == 'USD')
-    {
-        if ($data->SalesBalance < 0)
-        {
-            $pdf->SetTextColor(255, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrutImport,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance,2), 2, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TRB',0,'R');
-        }
-        else
-        {
-            $pdf->SetTextColor(0, 0, 0);
-            $pdf->Ln();
-            $pdf->Cell(0.7,$height,$noUrutImport,1,0,'C');
-            $pdf->Cell(7,$height,$data->Name,1,0,'L');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round($data->SalesBalance,2), 2, ',', '.') ,'TB',0,'R');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(ppn($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TB',0,'R');
-            $pdf->Cell(1,$height,'$','LTB',0,'L');
-            $pdf->Cell(2.5,$height,number_format(round(amount($data->SalesBalance,$data->Tax),2), 2, ',', '.'),'TRB',0,'R');
-        }        
-        
-        $noUrutImport++;
-        $SumSalesBalanceImport    += round($data->SalesBalance,2);
-        $SumTaxImport             += round(ppn($data->SalesBalance,$data->Tax),2);
-        $SumInvoiceAmountImport   += round(amount($data->SalesBalance,$data->Tax),2);
-    }  
-}
-
-$pdf->SetFont('Arial','B',9);
-$pdf->Ln($height);
-$pdf->Cell(7.7,$height,'TOTAL',1,0,'C');
-$pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumSalesBalanceImport, 2, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumTaxImport, 2, ',', '.'),'TB',0,'R');
-$pdf->Cell(1,$height,'$','LTB',0,'L');
-$pdf->Cell(2.5,$height,number_format($SumInvoiceAmountImport, 2, ',', '.'),'TRB',0,'R');
-
-// END IMPORT //
-
 $pdf->Output("Total Supplier.pdf","I");
 
 

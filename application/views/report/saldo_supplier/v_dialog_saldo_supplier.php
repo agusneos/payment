@@ -30,7 +30,7 @@
             <label for="type">Vendor</label>
             <input id="vendor" name="vendor" class="easyui-combobox" data-options="
                 url:'<?php echo site_url('report/saldo_supplier/get_supp'); ?>',
-                method:'get', valueField:'Id', textField:'Name', panelHeight:200" style="width:200px;" required/>
+                method:'get', valueField:'Id', textField:'Name', panelHeight:200" style="width:300px;" required/>
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>

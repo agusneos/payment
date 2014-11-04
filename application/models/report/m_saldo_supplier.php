@@ -40,7 +40,7 @@ class M_saldo_supplier extends CI_Model
                     LEFT JOIN '.static::$vendor.'
                         ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND YEAR(PaymentDate) < '.$tahun.'
-                    ORDER BY PaymentDate ASC;');     
+                    ORDER BY PaymentDate ASC, PaymentNumber ASC, Note ASC;');  //query Mendapatkan Saldo Awal
   
         return $this->db->query('SELECT Name, PaymentDate, PaymentNumber, Note,
                     DebetUSD, DebetIDR, KreditUSD, KreditIDR, 
@@ -49,7 +49,7 @@ class M_saldo_supplier extends CI_Model
                     LEFT JOIN '.static::$vendor.'
                         ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND YEAR(PaymentDate) = '.$tahun.'
-                    ORDER BY PaymentDate ASC;');
+                    ORDER BY PaymentDate ASC, PaymentNumber ASC, Note ASC;');
     }
        
     

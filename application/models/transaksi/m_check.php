@@ -99,8 +99,12 @@ class M_check extends CI_Model
         $ExchRate           = $this->input->post('ExchRate',true);
         $InvoiceAmount      = $this->input->post('InvoiceAmount',true);
      
+        $PaymentNumber      = '';
+        $Note               = '';
         $KreditUSD          = 0;
         $KreditIDR          = 0;
+        $DebetUSD           = 0;
+        $DebetIDR           = 0;
         
         if ( $InvoiceAmount > 0 )
         {
@@ -120,13 +124,34 @@ class M_check extends CI_Model
                 $KreditIDR      = $KreditUSD * $ExchRate;                
             }
         }
+        else
+        {
+            if ( $CurrencyCode == 'IDR')
+            {
+                $OrderAccount   = $OA;
+                $PaymentDate    = $PD;
+                $Note           = $Ket;
+                $DebetIDR       = $InvoiceAmount * -1;                
+            }
+            else
+            {
+                $OrderAccount   = $OA;
+                $PaymentDate    = $PD;
+                $Note           = $Ket;
+                $DebetUSD       = round($InvoiceAmount, 2) * -1;
+                $DebetIDR       = $DebetUSD * $ExchRate;                
+            }
+        }
                
         return $this->db->insert(self::$voucher,array(
             'OrderAccount'  => $OrderAccount,
             'PaymentDate'   => $PaymentDate,
             'PaymentNumber' => $PaymentNumber,
+            'Note'          => $Note,
+            'DebetUSD'      => round($DebetUSD, 2),
+            'DebetIDR'      => round($DebetIDR, 0),
             'KreditUSD'     => round($KreditUSD, 2),
-            'KreditIDR'     => round($KreditIDR, 0),
+            'KreditIDR'     => round($KreditIDR, 0)
         ));
     }
     

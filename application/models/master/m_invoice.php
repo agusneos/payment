@@ -80,7 +80,10 @@ class M_invoice extends CI_Model
         
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                     $SalesBalance, $CurrencyCode, $ExchRate)
-    {      
+    {
+        date_default_timezone_set('Asia/Jakarta');
+        $InvoiceDate = date("Y-m-d",($InvoiceDate - 25569)*86400);
+        
         return $this->db->simple_query('INSERT INTO vendinvoicejour (OrderAccount, InvoiceId, InvoiceDate,
                 Qty, SalesBalance, Tax, CurrencyCode, ExchRate, CheckDate, PaymentSisa) 
                 SELECT "'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
@@ -89,7 +92,7 @@ class M_invoice extends CI_Model
                 FROM Vendor WHERE Id = "'.$OrderAccount.'"');
 
     }
-    
+        
     function updateRate()
     {
         $bulan  = $this->input->post('bulan1',true);

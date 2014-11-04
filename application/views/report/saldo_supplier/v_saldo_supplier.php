@@ -16,6 +16,19 @@ class PDF extends FPDF
         // Line break
         $this->Ln(1);
     }   
+    
+    function Footer()
+    {
+        // Position at 1.5 cm from bottom
+        $this->SetY(-15);
+        // Arial Arial 10
+        $this->SetFont('Arial','',10);;
+        // Page number
+        $this->SetTextColor(0, 0, 0);
+        $this->Text(17.9,28.5,'Page '.$this->PageNo().' / {nb}');
+        // Image
+        //$this->Image('assets/images/confidential_1.jpg', 11, 27.7,6,1.5);
+    }
 
 }
 
@@ -25,7 +38,7 @@ $pdf = new PDF();
 date_default_timezone_set('Asia/Jakarta');
 $pdf->FPDF("P","cm","A4");
 $pdf->SetMargins(0.5,1,0.5);
-//$pdf->AliasNbPages();
+$pdf->AliasNbPages(); //untuk memunculkan halaman
 $pdf->AddPage();
 
 
@@ -72,8 +85,6 @@ $pdf->Ln($height*1.5);
 $pdf->Cell(0,$height*1.5,tahun($data->PaymentDate),0,0,'C');
 $pdf->Ln($height*2);
 
-// START LOKAL //
-
 $pdf->SetFont('Arial','B',7);
 //$pdf->Cell(2,$height,'OrderAccount',1,0,'C');
 $pdf->Cell(2,$height,'Tanggal',1,0,'C');
@@ -86,6 +97,7 @@ $pdf->Cell(2,$height,'KREDIT IDR',1,0,'C');
 $pdf->Cell(2,$height,'SALDO USD',1,0,'C');
 $pdf->Cell(2,$height,'SALDO IDR',1,0,'C');
 
+// START LOKAL //
 $pdf->SetFont('Arial','',7);
 
 foreach($rows->result() as $data)

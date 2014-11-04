@@ -102,7 +102,7 @@ class M_payment extends CI_Model
         $DebetUSD           = 0;
         $DebetIDR           = 0;
         
-        if ( $InvoiceAmount >= 0 )
+        if ( $InvoiceAmount > 0 )
         {
             if ( $CurrencyCode == 'IDR')
             {
@@ -118,7 +118,7 @@ class M_payment extends CI_Model
                 $DebetIDR       = $DebetUSD * $ExchRate;
             }
         }
-        else
+      /*  else
         {
             if ( $CurrencyCode == 'IDR')
             {
@@ -134,6 +134,8 @@ class M_payment extends CI_Model
                 $DebetIDR       = $DebetUSD * $ExchRate * -1;
             }
         }
+       * 
+       */
         
         return $this->db->insert(self::$voucher,array(
             'OrderAccount'      => $this->input->post('OrderAccount',true),
@@ -145,6 +147,7 @@ class M_payment extends CI_Model
         ));
     }
     
+    /*
     function createVoucherInvoice()
     {
         return $this->db->insert(self::$voucher,array(
@@ -158,6 +161,8 @@ class M_payment extends CI_Model
             'PaymentCreateDate' =>  $this->input->post('PaymentCreateDate',true),
         ));
     }
+     * 
+     */
         
 }
 
