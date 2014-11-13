@@ -130,14 +130,16 @@ class M_check extends CI_Model
             {
                 $OrderAccount   = $OA;
                 $PaymentDate    = $PD;
-                $Note           = $Ket;
+                //$Note           = $Ket;
+                $PaymentNumber  = $Ket;
                 $DebetIDR       = $InvoiceAmount * -1;                
             }
             else
             {
                 $OrderAccount   = $OA;
                 $PaymentDate    = $PD;
-                $Note           = $Ket;
+                //$Note           = $Ket;
+                $PaymentNumber  = $Ket;
                 $DebetUSD       = round($InvoiceAmount, 2) * -1;
                 $DebetIDR       = $DebetUSD * $ExchRate;                
             }

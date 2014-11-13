@@ -16,10 +16,11 @@ class M_voucher extends CI_Model
         $bulan      = $pecah[0];
         $tahun      = $pecah[1];
         
-        $this->db->select('Name, PaymentDate, PaymentNumber, SUM(DebetUSD) AS DebetUSD, SUM(DebetIDR) AS DebetIDR');
+        $this->db->select('Name, PaymentDate, PaymentNumber, SUM(DebetUSD)-SUM(KreditUSD) AS DebetUSD, SUM(DebetIDR)-SUM(KreditIDR) AS DebetIDR');
         $this->db->join(self::$vendor, self::$voucher.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->where('PaymentNumber != ""')
-                 ->where('DebetIDR > 0')
+                 ->where('Note != ""')
+                // ->where('DebetIDR > 0')
                  ->where('MONTH(PaymentDate) = '.$bulan)
                  ->where('YEAR(PaymentDate) = '.$tahun);
         $this->db->group_by('OrderAccount, PaymentNumber');

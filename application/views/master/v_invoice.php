@@ -170,7 +170,7 @@
     <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-updateRate').dialog('close')">Batal</a>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript">  
     function updateRate()
     {
         var date = new Date();

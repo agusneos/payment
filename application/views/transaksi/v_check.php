@@ -57,9 +57,11 @@
                      ExchRate:row.ExchRate},'json');
             }
             $('#grid-transaksi_check').datagrid('reload');
-            $.messager.show({
-                title: 'Info',
-                msg: 'Check Data Berhasil'
+            $('#grid-transaksi_check').datagrid('reload');
+            
+             $.messager.alert('Info','Check Data Berhasil !','info', function(){
+                $('#grid-transaksi_check').datagrid('reload');
+                $('#grid-transaksi_check').datagrid('reload');
             });
         }
         else

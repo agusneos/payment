@@ -121,7 +121,8 @@
                    data-options="groupSeparator:'.',decimalSeparator:',', precision:2"/>
         </div>
         <div class="fitem">
-            <input id="InvoiceAmountTemp" name="InvoiceAmountTemp" class="easyui-validatebox" type="hidden" />
+            <input id="InvoiceAmountTemp" name="InvoiceAmountTemp" class="easyui-numberbox" type="hidden" 
+                   data-options="groupSeparator:'.',decimalSeparator:',', precision:2"/>
         </div>
     </form>
 </div>
@@ -137,7 +138,8 @@
     function paid()
     {     
         var rows = $('#grid-transaksi_payment').datagrid('getSelections');
-
+        var InvoiceAmountSum       = 0;
+        
         if(rows.length<1)
         {            
             $.messager.alert('Info','Data Belum Dipilih !','info');
@@ -149,30 +151,32 @@
             {
                 $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
                 $('#fm-paid').form('reset');
-                var InvoiceAmount       = 0;
+              //  var InvoiceAmount       = 0;
 
                 for(var i=0; i<rows.length; i++)            
                 {
                     var row = rows[i];
-                    InvoiceAmount       = eval(InvoiceAmount)+eval(row.InvoiceAmount);
+                    InvoiceAmountSum       = eval(InvoiceAmountSum)+eval(row.InvoiceAmount);
                 }
-                $('#InvoiceAmountSum').numberbox('setValue',InvoiceAmount);
-                $('#InvoiceAmountTemp').val(InvoiceAmount);
+                $('#InvoiceAmountSum').numberbox('setValue',eval(InvoiceAmountSum));
+                $('#InvoiceAmountTemp').numberbox('setValue',eval(InvoiceAmountSum));
+                ///$('#InvoiceAmountTemp').val(eval(InvoiceAmountSum));
                 $('#InvoiceAmountSum').numberbox({disabled: true});
             }
             else
             {
                 $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
                 $('#fm-paid').form('reset');
-                var InvoiceAmount       = 0;
+                //var InvoiceAmount       = 0;
 
                 for(var i=0; i<rows.length; i++)            
                 {
                     var row = rows[i];
-                    InvoiceAmount       = eval(InvoiceAmount)+eval(row.InvoiceAmount);
+                    InvoiceAmountSum       = eval(InvoiceAmountSum)+eval(row.InvoiceAmount);
                 }
-                $('#InvoiceAmountSum').numberbox('setValue',InvoiceAmount);
-                $('#InvoiceAmountTemp').val(InvoiceAmount);
+                $('#InvoiceAmountSum').numberbox('setValue',eval(InvoiceAmountSum));
+                $('#InvoiceAmountTemp').numberbox('setValue',eval(InvoiceAmountSum));
+                //$('#InvoiceAmountTemp').val(eval(InvoiceAmountSum));
                 $('#InvoiceAmountSum').numberbox({disabled: false});
             }
         }
@@ -180,15 +184,16 @@
         {
             $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
             $('#fm-paid').form('reset');
-            var InvoiceAmount       = 0;
+           // var InvoiceAmount       = 0;
 
             for(var i=0; i<rows.length; i++)            
             {
                 var row = rows[i];
-                InvoiceAmount       = eval(InvoiceAmount)+eval(row.InvoiceAmount);
+                InvoiceAmountSum       = eval(InvoiceAmountSum)+eval(row.InvoiceAmount);
             }
-            $('#InvoiceAmountSum').numberbox('setValue',InvoiceAmount);
-            $('#InvoiceAmountTemp').val(InvoiceAmount);
+            $('#InvoiceAmountSum').numberbox('setValue',eval(InvoiceAmountSum));
+            $('#InvoiceAmountTemp').numberbox('setValue',eval(InvoiceAmountSum));
+            //$('#InvoiceAmountTemp').val(eval(InvoiceAmountSum));
             $('#InvoiceAmountSum').numberbox({disabled: true});
         }
     }
@@ -228,7 +233,7 @@
         var paid_date           = $('#paiddate').datebox('getValue');
         var paid_no             = $('#paidno').val();
         var InvoiceAmountSum    = $('#InvoiceAmountSum').numberbox('getValue');
-        var InvoiceAmountTemp   = $('#InvoiceAmountTemp').val();
+        var InvoiceAmountTemp   = $('#InvoiceAmountTemp').numberbox('getValue');
         var rows                = $('#grid-transaksi_payment').datagrid('getSelections');        
         
         if (eval(InvoiceAmountSum) == eval(InvoiceAmountTemp))
@@ -238,17 +243,18 @@
                 var row = rows[i];
                 $.post('<?php echo site_url('transaksi/payment/update'); ?>',
                     {InvoiceId      : row.InvoiceId,
-                    PaymentSisa     : eval(0)},'json');
+                    PaymentSisa     : 0},'json');
 
                 $.post('<?php echo site_url('transaksi/payment/createVoucher'); ?>',
                     {OrderAccount   : row.OrderAccount, 
-                    PaymentDate    : paid_date,
-                    PaymentNumber  : paid_no,
-                    Note           : row.InvoiceId,
-                    InvoiceAmount  : row.InvoiceAmount,
-                    CurrencyCode   : row.CurrencyCode, 
-                    ExchRate       : row.ExchRate},'json');   
-            }
+                    PaymentDate     : paid_date,
+                    PaymentNumber   : paid_no,
+                    Note            : row.InvoiceId,
+                    InvoiceAmount   : row.InvoiceAmount,
+                    CurrencyCode    : row.CurrencyCode, 
+                    ExchRate        : row.ExchRate},'json');   
+            }            
+            
         }
         else
         {
@@ -257,28 +263,27 @@
                 var row = rows[i];
                 $.post('<?php echo site_url('transaksi/payment/update'); ?>',
                     {InvoiceId      : row.InvoiceId,
-                    PaymentSisa    : eval(InvoiceAmountTemp) - eval(InvoiceAmountSum)},'json');
+                    PaymentSisa     : eval(InvoiceAmountTemp) - eval(InvoiceAmountSum)},'json');
 
                 $.post('<?php echo site_url('transaksi/payment/createVoucher'); ?>',
                     {OrderAccount   : row.OrderAccount, 
-                    PaymentDate    : paid_date,
-                    PaymentNumber  : paid_no,
-                    Note           : row.InvoiceId,
-                    InvoiceAmount  : eval(InvoiceAmountSum),
-                    CurrencyCode   : row.CurrencyCode, 
-                    ExchRate       : row.ExchRate},'json');
+                    PaymentDate     : paid_date,
+                    PaymentNumber   : paid_no,
+                    Note            : row.InvoiceId,
+                    InvoiceAmount   : eval(InvoiceAmountSum),
+                    CurrencyCode    : row.CurrencyCode, 
+                    ExchRate        : row.ExchRate},'json');
             }
-        }                     
+
+        }
         
         $('#dlg-paid').dialog('close');
         $('#grid-transaksi_payment').datagrid('reload');
         $('#grid-transaksi_payment').datagrid('reload');
-        $('#grid-transaksi_payment').datagrid('reload');
-        $('#grid-transaksi_payment').datagrid('reload');
-        $('#grid-transaksi_payment').datagrid('reload');
-        $.messager.show({
-            title: 'Info',
-            msg: 'Update Data Berhasil'
+
+        $.messager.alert('Info','Payment Berhasil !','info', function(){
+            $('#grid-transaksi_payment').datagrid('reload');
+            $('#grid-transaksi_payment').datagrid('reload');
         });
     }
     
