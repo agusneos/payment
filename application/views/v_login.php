@@ -34,17 +34,6 @@
         $('#username').next().find('input').focus();
     });
     
-    function progress(){
-        $.messager.progress({
-            title:'Please wait',
-            msg:'Loading data...'
-        });
-        setTimeout(function(){
-            $.messager.progress('close');
-             window.location.assign('<?php echo site_url("")//redirect ke index; ?>');
-        },1000)           
-    }    
-    
     $(function(){
 	$('#username').textbox('textbox').keypress(function(e){
             if (e.keyCode == 13){
@@ -61,7 +50,16 @@
         });
     });   
     
-    $('#submit-login').keypress(function() {
+    $('#submit-login').keyup(function() {
+        login();
+    });
+    
+    $('#submit-login').click(function() {
+        login();
+    });
+    
+    function login()
+    {
         $.post('<?php echo site_url("main/proses_login"); ?>', $('#form-login').serialize(), function(e) {
             if (e.success) {                
                 progress();
@@ -73,22 +71,19 @@
                 }); 
             }
         });
-    });
+    }
     
-    $('#submit-login').click(function() {
-        $.post('<?php echo site_url("main/proses_login"); ?>', $('#form-login').serialize(), function(e) {
-            if (e.success) {                
-                progress();
-            }
-            else {   
-                $('#form-login').form('clear');
-                $.messager.alert('Alert','Maaf Username atau Password Anda Salah!','error',function(){
-                    $('#username').next().find('input').focus();
-                });                
-            }
+    function progress()
+    {
+        $.messager.progress({
+            title:'Please wait',
+            msg:'Loading data...'
         });
-    });
-    
+        setTimeout(function(){
+            $.messager.progress('close');
+             window.location.assign('<?php echo site_url("")//redirect ke index; ?>');
+        },1000)           
+    }
 </script>
  
 </html>
