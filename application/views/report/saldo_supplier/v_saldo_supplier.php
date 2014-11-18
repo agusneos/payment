@@ -1,9 +1,37 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class PDF extends FPDF
+foreach($rows->result() as $data)
+{
+    
+}
+
+$tanggal = isset($data->PaymentDate);
+if ($tanggal)
 {    
-    function Header()
+    global $vendor;
+    $vendor = $data->Name;
+}
+else
+{
+    $pdf = new PDF();
+    $pdf->Error('Data Tidak Ditemukan.');
+}
+global $tahun;
+$tahun = $data->PaymentDate;
+
+class PDF extends FPDF
+{
+    function tahun($tgl)
     {
+        setlocale (LC_TIME, 'INDONESIAN');
+        $tgl = strtotime($tgl);
+        $st = strftime( "Tahun : %Y", $tgl);
+        return strtoupper($st);
+    }
+    
+    function Header()
+    {        
+        $this->SetTextColor(0, 0, 0);
         // Logo
         $this->Image('assets/images/saga_logo.jpg', 1, 1,7.5,1.2);
         // Arial bold 15
@@ -14,7 +42,29 @@ class PDF extends FPDF
         // Title
         //$this->Cell(5,1,'Daftar PKWT',0,0,'C');
         // Line break
-        $this->Ln(1);
+        $this->Ln();
+        
+        $this->SetFont('Arial','',14);
+        $this->Cell(0,0.5*1.5,'RINCIAN SALDO SUPPLIER',0,0,'C');
+        $this->Ln(0.5*1.5);
+        $vendor = $GLOBALS['vendor'];
+        $this->Cell(0,0.5*1.5,$vendor,0,0,'C');
+        $this->Ln(0.5*1.5);
+        $tahun = $GLOBALS['tahun'];
+        $this->Cell(0,0.5*1.5,$this->tahun($tahun),0,0,'C');
+        $this->Ln(0.5*2);
+
+        $this->SetFont('Arial','B',7);
+        $this->Cell(2,0.5,'Tanggal',1,0,'C');
+        $this->Cell(3,0.5,'No. Fakt. / Inv / Nota',1,0,'C');
+        $this->Cell(3,0.5,'Keterangan',1,0,'C');
+        $this->Cell(2,0.5,'DEBET USD',1,0,'C');
+        $this->Cell(2,0.5,'DEBET IDR',1,0,'C');
+        $this->Cell(2,0.5,'KREDIT USD',1,0,'C');
+        $this->Cell(2,0.5,'KREDIT IDR',1,0,'C');
+        $this->Cell(2,0.5,'SALDO USD',1,0,'C');
+        $this->Cell(2,0.5,'SALDO IDR',1,0,'C');
+        $this->Ln();
     }   
     
     function Footer()
@@ -41,7 +91,6 @@ $pdf->SetMargins(0.5,1,0.5);
 $pdf->AliasNbPages(); //untuk memunculkan halaman
 $pdf->AddPage();
 
-
 function format_date($tgl)
 {
     setlocale (LC_TIME, 'INDONESIAN');
@@ -50,62 +99,15 @@ function format_date($tgl)
     return strtoupper($st);
 }
 
-function hari_ini()
-{
-    setlocale (LC_TIME, 'INDONESIAN');
-    $st = strftime( "%d %B %Y", strtotime(date('d-F-Y')));
-    return $st;
-}
-
-function tahun($tgl)
-{
-    setlocale (LC_TIME, 'INDONESIAN');
-    $tgl = strtotime($tgl);
-    $st = strftime( "Tahun : %Y", $tgl);
-    return strtoupper($st);
-}
-
-
-foreach($rows->result() as $data)
-{
-    
-}
-
-$tanggal = isset($data->PaymentDate);
-$height = 0.5;
-$pdf->SetFont('Arial','',14);
-$pdf->Cell(0,$height*1.5,'RINCIAN SALDO SUPPLIER',0,0,'C');
-$pdf->Ln($height*1.5);
-if ($tanggal)
-    $pdf->Cell(0,$height*1.5,$data->Name,0,0,'C');
-else
-    $pdf->Error('Data Tidak Ditemukan.');
-//$pdf->Cell(0,$height*1.5,  nama($datas->Name),0,0,'C');
-$pdf->Ln($height*1.5);
-$pdf->Cell(0,$height*1.5,tahun($data->PaymentDate),0,0,'C');
-$pdf->Ln($height*2);
-
-$pdf->SetFont('Arial','B',7);
-//$pdf->Cell(2,$height,'OrderAccount',1,0,'C');
-$pdf->Cell(2,$height,'Tanggal',1,0,'C');
-$pdf->Cell(3,$height,'No. Fakt. / Inv / Nota',1,0,'C');
-$pdf->Cell(3,$height,'Keterangan',1,0,'C');
-$pdf->Cell(2,$height,'DEBET USD',1,0,'C');
-$pdf->Cell(2,$height,'DEBET IDR',1,0,'C');
-$pdf->Cell(2,$height,'KREDIT USD',1,0,'C');
-$pdf->Cell(2,$height,'KREDIT IDR',1,0,'C');
-$pdf->Cell(2,$height,'SALDO USD',1,0,'C');
-$pdf->Cell(2,$height,'SALDO IDR',1,0,'C');
-
 // START LOKAL //
+$height = 0.5;
 $pdf->SetFont('Arial','',7);
 
 foreach($rows->result() as $data)
 {
     if ($data->DebetIDR > 0)
     {
-        $pdf->SetTextColor(255, 0, 0);
-        $pdf->Ln();
+        $pdf->SetTextColor(255, 0, 0);        
         $pdf->Cell(2,$height,format_date($data->PaymentDate),1,0,'L');
         $pdf->Cell(3,$height,$data->PaymentNumber,1,0,'L');
         $pdf->Cell(3,$height,$data->Note,1,0,'L');
@@ -114,12 +116,12 @@ foreach($rows->result() as $data)
         $pdf->Cell(2,$height,number_format($data->KreditUSD, 2, ',', '.'),1,0,'R');
         $pdf->Cell(2,$height,number_format($data->KreditIDR, 0, ',', '.'),1,0,'R');
         $pdf->Cell(2,$height,number_format($data->saldo_usd, 2, ',', '.'),1,0,'R');
-        $pdf->Cell(2,$height,number_format($data->saldo_IDR, 0, ',', '.'),1,0,'R'); 
+        $pdf->Cell(2,$height,number_format($data->saldo_IDR, 0, ',', '.'),1,0,'R');
+        $pdf->Ln();
     }
     else
     {
-        $pdf->SetTextColor(0, 0, 0);
-        $pdf->Ln();
+        $pdf->SetTextColor(0, 0, 0);        
         $pdf->Cell(2,$height,format_date($data->PaymentDate),1,0,'L');
         $pdf->Cell(3,$height,$data->PaymentNumber,1,0,'L');
         $pdf->Cell(3,$height,$data->Note,1,0,'L');
@@ -129,6 +131,7 @@ foreach($rows->result() as $data)
         $pdf->Cell(2,$height,number_format($data->KreditIDR, 0, ',', '.'),1,0,'R');
         $pdf->Cell(2,$height,number_format($data->saldo_usd, 2, ',', '.'),1,0,'R');
         $pdf->Cell(2,$height,number_format($data->saldo_IDR, 0, ',', '.'),1,0,'R'); 
+        $pdf->Ln();
     }
 }
 
