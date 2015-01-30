@@ -5,7 +5,7 @@
 
 <!-- Data Grid -->
 <table id="grid-transaksi_check"
-    data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:false, 
+    data-options="pageSize:100, multiSort:true, remoteSort:true, rownumbers:true, singleSelect:false, 
                 showFooter:false, fit:true, fitColumns:true, toolbar:toolbar_transaksi_check">
     <thead>
         <tr>           
