@@ -64,6 +64,9 @@
 .icon-lock{
 	background:url('icons/lock.png') no-repeat center center;
 }
+.icon-more{
+	background:url('icons/more.png') no-repeat center center;
+}
 
 
 .icon-mini-add{
@@ -182,4 +185,28 @@
 }
 .icon-date{
 	background:url('icons/date.png') no-repeat center center;
+}
+.icon-approved{
+	background:url('icons/approved.png') no-repeat center center;
+}
+.icon-approved_denied{
+	background:url('icons/approved_denied.png') no-repeat center center;
+}
+.icon-approved_notyet{
+	background:url('icons/approved_notyet.png') no-repeat center center;
+}
+.icon-chart-curve{
+	background:url('icons/chart-curve.png') no-repeat center center;
+}
+.icon-bom{
+	background:url('icons/BOM.png') no-repeat center center;
+}
+.icon-flow{
+	background:url('icons/flow.png') no-repeat center center;
+}
+.icon-calculator{
+	background:url('icons/calculator.png') no-repeat center center;
+}
+.icon-hammer_plus{
+	background:url('icons/hammer_plus.png') no-repeat center center;
 }

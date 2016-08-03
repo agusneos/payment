@@ -4,7 +4,7 @@
  * Licensed under the GPL:
  *   http://www.gnu.org/licenses/gpl.txt
  *
- * Copyright 2011 stworthy [ stworthy@gmail.com ] 
+ * Copyright 2011-2015 www.jeasyui.com 
  * 
  * Dependencies:
  *   datagrid
@@ -12,86 +12,161 @@
  * 
  */
 (function($){
-	var currTarget;
+	// var oldLoadDataMethod = $.fn.datagrid.methods.loadData;
+	// $.fn.datagrid.methods.loadData = function(jq, data){
+	// 	jq.each(function(){
+	// 		$.data(this, 'datagrid').filterSource = null;
+	// 	});
+	// 	return oldLoadDataMethod.call($.fn.datagrid.methods, jq, data);
+	// };
+
+	var autoGrids = [];
+	function checkAutoGrid(){
+		autoGrids = $.grep(autoGrids, function(t){
+			return t.length && t.data('edatagrid');
+		});
+	}
+	function saveAutoGrid(omit){
+		checkAutoGrid();
+		$.map(autoGrids, function(t){
+			if (t[0] != $(omit)[0]){
+				t.edatagrid('saveRow');
+			}
+		});
+		checkAutoGrid();
+	}
+	function addAutoGrid(dg){
+		checkAutoGrid();
+		for(var i=0; i<autoGrids.length; i++){
+			if ($(autoGrids[i])[0] == $(dg)[0]){return;}
+		}
+		autoGrids.push($(dg));
+	}
+	function delAutoGrid(dg){
+		checkAutoGrid();
+		autoGrids = $.grep(autoGrids, function(t){
+			return $(t)[0] != $(dg)[0];
+		});
+	}
+
 	$(function(){
 		$(document).unbind('.edatagrid').bind('mousedown.edatagrid', function(e){
-			var p = $(e.target).closest('div.datagrid-view,div.combo-panel');
+			var p = $(e.target).closest('div.datagrid-view,div.combo-panel,div.window,div.window-mask');
 			if (p.length){
 				if (p.hasClass('datagrid-view')){
-					var dg = p.children('table');
-					if (dg.length && currTarget != dg[0]){
-						_save();
-					}
+					saveAutoGrid(p.children('table'));
 				}
 				return;
 			}
-			_save();
-			
-			function _save(){
-				var dg = $(currTarget);
-				if (dg.length){
-					dg.edatagrid('saveRow');
-					currTarget = undefined;
-				}
-			}
+			saveAutoGrid();
 		});
 	});
 	
 	function buildGrid(target){
 		var opts = $.data(target, 'edatagrid').options;
 		$(target).datagrid($.extend({}, opts, {
-			onDblClickCell:function(index,field){
+			onDblClickCell:function(index,field,value){
 				if (opts.editing){
 					$(this).edatagrid('editRow', index);
-					focusEditor(field);
+					focusEditor(target, field);
+				}
+				if (opts.onDblClickCell){
+					opts.onDblClickCell.call(target, index, field, value);
 				}
 			},
-			onClickCell:function(index,field){
-				if (opts.editing && opts.editIndex >= 0){
-					$(this).edatagrid('editRow', index);
-					focusEditor(field);
+			onClickCell:function(index,field,value){
+				// if (opts.editing && opts.editIndex >= 0){
+				// 	$(this).edatagrid('editRow', index);
+				// 	focusEditor(target, field);
+				// }
+				if (opts.editIndex >= 0){
+					var dg = $(this);
+					if (opts.editing){
+						dg.edatagrid('editRow', index);
+					} else {
+						setTimeout(function(){
+							dg.edatagrid('selectRow', opts.editIndex);
+						}, 0);
+					}
+					focusEditor(target, field);
 				}
+				if (opts.onClickCell){
+					opts.onClickCell.call(target, index, field, value);
+				}
+			},
+			onBeforeEdit: function(index, row){
+				if (opts.onBeforeEdit){
+					if (opts.onBeforeEdit.call(target, index, row) == false){
+						return false;
+					}
+				}
+				if (opts.autoSave){
+					addAutoGrid(this);
+				}
+				opts.originalRow = $.extend(true, [], row);
 			},
 			onAfterEdit: function(index, row){
+				delAutoGrid(this);
 				opts.editIndex = -1;
 				var url = row.isNewRecord ? opts.saveUrl : opts.updateUrl;
 				if (url){
-					$.post(url, row, function(data){
-						if (data.isError){
-							$(target).edatagrid('cancelRow',index);
-							$(target).edatagrid('selectRow',index);
-							$(target).edatagrid('editRow',index);
-							opts.onError.call(target, index, data);
-							return;
+					var changed = false;
+					var fields = $(this).edatagrid('getColumnFields',true).concat($(this).edatagrid('getColumnFields'));
+					for(var i=0; i<fields.length; i++){
+						var field = fields[i];
+						var col = $(this).edatagrid('getColumnOption', field);
+						if (col.editor && opts.originalRow[field] != row[field]){
+							changed = true;
+							break;
 						}
-						data.isNewRecord = null;
-						$(target).datagrid('updateRow', {
-							index: index,
-							row: data
-						});
-						if (opts.tree){
-							var idValue = row[opts.idField||'id'];
-							var t = $(opts.tree);
-							var node = t.tree('find', idValue);
-							if (node){
-								node.text = row[opts.treeTextField];
-								t.tree('update', node);
-							} else {
-								var pnode = t.tree('find', row[opts.treeParentField]);
-								t.tree('append', {
-									parent: (pnode ? pnode.target : null),
-									data: [{id:idValue,text:row[opts.treeTextField]}]
-								});
+					}
+					if (changed){
+						opts.poster.call(target, url, row, function(data){
+							if (data.isError){
+								var originalRow = opts.originalRow;
+								$(target).edatagrid('cancelRow',index);
+								$(target).edatagrid('selectRow',index);
+								$(target).edatagrid('editRow',index);
+								opts.originalRow = originalRow;
+								opts.onError.call(target, index, data);
+								return;
 							}
-						}
+							data.isNewRecord = null;
+							$(target).datagrid('updateRow', {
+								index: index,
+								row: data
+							});
+							if (opts.tree){
+								var idValue = row[opts.idField||'id'];
+								var t = $(opts.tree);
+								var node = t.tree('find', idValue);
+								if (node){
+									node.text = row[opts.treeTextField];
+									t.tree('update', node);
+								} else {
+									var pnode = t.tree('find', row[opts.treeParentField]);
+									t.tree('append', {
+										parent: (pnode ? pnode.target : null),
+										data: [{id:idValue,text:row[opts.treeTextField]}]
+									});
+								}
+							}
+							opts.onSuccess.call(target, index, row);
+							opts.onSave.call(target, index, row);
+						}, function(data){
+							opts.onError.call(target, index, data);
+						});
+					} else {
 						opts.onSave.call(target, index, row);
-					},'json');
+					}
 				} else {
+					row.isNewRecord = false;
 					opts.onSave.call(target, index, row);
 				}
 				if (opts.onAfterEdit) opts.onAfterEdit.call(target, index, row);
 			},
 			onCancelEdit: function(index, row){
+				delAutoGrid(this);
 				opts.editIndex = -1;
 				if (row.isNewRecord) {
 					$(this).datagrid('deleteRow', index);
@@ -100,7 +175,6 @@
 			},
 			onBeforeLoad: function(param){
 				if (opts.onBeforeLoad.call(target, param) == false){return false}
-//				$(this).datagrid('rejectChanges');
 				$(this).edatagrid('cancelRow');
 				if (opts.tree){
 					var node = $(opts.tree).tree('getSelected');
@@ -110,17 +184,6 @@
 		}));
 		
 		
-		function focusEditor(field){
-			var editor = $(target).datagrid('getEditor', {index:opts.editIndex,field:field});
-			if (editor){
-				editor.target.focus();
-			} else {
-				var editors = $(target).datagrid('getEditors', opts.editIndex);
-				if (editors.length){
-					editors[0].target.focus();
-				}
-			}
-		}
 		
 		if (opts.tree){
 			$(opts.tree).tree({
@@ -130,21 +193,37 @@
 				},
 				onDrop: function(dest,source,point){
 					var targetId = $(this).tree('getNode', dest).id;
-					$.ajax({
-						url: opts.treeDndUrl,
-						type:'post',
-						data:{
-							id:source.id,
-							targetId:targetId,
-							point:point
-						},
-						dataType:'json',
-						success:function(){
-							$(target).datagrid('load');
-						}
+					var data = {
+						id:source.id,
+						targetId:targetId,
+						point:point
+					};
+					opts.poster.call(target, opts.treeDndUrl, data, function(result){
+						$(target).datagrid('load');
 					});
 				}
 			});
+		}
+	}
+
+	function focusEditor(target, field){
+		var opts = $(target).edatagrid('options');
+		var t;
+		var editor = $(target).datagrid('getEditor', {index:opts.editIndex,field:field});
+		if (editor){
+			t = editor.target;
+		} else {
+			var editors = $(target).datagrid('getEditors', opts.editIndex);
+			if (editors.length){
+				t = editors[0].target;
+			}
+		}
+		if (t){
+			if ($(t).hasClass('textbox-f')){
+				$(t).textbox('textbox').focus();
+			} else {
+				$(t).focus();					
+			}
 		}
 	}
 	
@@ -182,6 +261,12 @@
 			var opts = $.data(jq[0], 'edatagrid').options;
 			return opts;
 		},
+		loadData: function(jq, data){
+			return jq.each(function(){
+				$(this).edatagrid('cancelRow');
+				$(this).datagrid('loadData', data);
+			});
+		},
 		enableEditing: function(jq){
 			return jq.each(function(){
 				var opts = $.data(this, 'edatagrid').options;
@@ -193,6 +278,11 @@
 				var opts = $.data(this, 'edatagrid').options;
 				opts.editing = false;
 			});
+		},
+		isEditing: function(jq, index){
+			var opts = $.data(jq[0], 'edatagrid').options;
+			var tr = opts.finder.getTr(jq[0], index);
+			return tr.length && tr.hasClass('datagrid-row-editing');
 		},
 		editRow: function(jq, index){
 			return jq.each(function(){
@@ -211,15 +301,11 @@
 						}
 						dg.datagrid('endEdit', editIndex);
 						dg.datagrid('beginEdit', index);
+						if (!dg.edatagrid('isEditing', index)){
+							return;
+						}
 						opts.editIndex = index;
-						
-						if (currTarget != this && $(currTarget).length){
-							$(currTarget).edatagrid('saveRow');
-							currTarget = undefined;
-						}
-						if (opts.autoSave){
-							currTarget = this;
-						}
+						focusEditor(this);
 						
 						var rows = dg.datagrid('getRows');
 						opts.onEdit.call(this, index, rows[index]);
@@ -248,12 +334,11 @@
 					}
 					dg.datagrid('endEdit', opts.editIndex);
 				}
-				var rows = dg.datagrid('getRows');
 				
 				function _add(index, row){
 					if (index == undefined){
 						dg.datagrid('appendRow', row);
-						opts.editIndex = rows.length - 1;
+						opts.editIndex = dg.datagrid('getRows').length - 1;
 					} else {
 						dg.datagrid('insertRow', {index:index,row:row});
 						opts.editIndex = index;
@@ -264,21 +349,11 @@
 				} else {
 					_add(index, {isNewRecord:true});
 				}
-				
-//				if (index == undefined){
-//					dg.datagrid('appendRow', {isNewRecord:true});
-//					opts.editIndex = rows.length - 1;
-//				} else {
-//					dg.datagrid('insertRow', {
-//						index: index,
-//						row: {isNewRecord:true}
-//					});
-//					opts.editIndex = index;
-//				}
-				
+								
 				dg.datagrid('beginEdit', opts.editIndex);
 				dg.datagrid('selectRow', opts.editIndex);
 				
+				var rows = dg.datagrid('getRows');
 				if (opts.tree){
 					var node = $(opts.tree).tree('getSelected');
 					rows[opts.editIndex][opts.treeParentField] = (node ? node.id : 0);
@@ -327,7 +402,7 @@
 						}
 					}
 				}
-				
+
 				if (!rows.length){
 					$.messager.show({
 						title: opts.destroyMsg.norecord.title,
@@ -353,7 +428,7 @@
 					} else {
 						if (opts.destroyUrl){
 							var idValue = row[opts.idField||'id'];
-							$.post(opts.destroyUrl, {id:idValue}, function(data){
+							opts.poster.call(dg[0], opts.destroyUrl, {id:idValue}, function(data){
 								var index = dg.datagrid('getRowIndex', idValue);
 								if (data.isError){
 									dg.datagrid('selectRow', index);
@@ -372,7 +447,14 @@
 									dg.datagrid('deleteRow', index);
 								}
 								opts.onDestroy.call(dg[0], index, row);
-							}, 'json');
+								var pager = dg.datagrid('getPager');
+								if (pager.length && !dg.datagrid('getRows').length){
+									dg.datagrid('options').pageNumber = pager.pagination('options').pageNumber;
+									dg.datagrid('reload');
+								}
+							}, function(data){
+								opts.onError.call(dg[0], index, data);
+							});
 						} else {
 							dg.datagrid('cancelEdit', index);
 							dg.datagrid('deleteRow', index);
@@ -385,6 +467,7 @@
 	};
 	
 	$.fn.edatagrid.defaults = $.extend({}, $.fn.datagrid.defaults, {
+		singleSelect: true,
 		editing: true,
 		editIndex: -1,
 		destroyMsg:{
@@ -397,8 +480,24 @@
 				msg:'Are you sure you want to delete?'
 			}
 		},
-//		destroyConfirmTitle: 'Confirm',
-//		destroyConfirmMsg: 'Are you sure you want to delete?',
+		poster: function(url, data, success, error){
+			$.ajax({
+				type: 'post',
+				url: url,
+				data: data,
+				dataType: 'json',
+				success: function(data){
+					success(data);
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					error({
+						jqXHR: jqXHR,
+						textStatus: textStatus,
+						errorThrown: errorThrown
+					});
+				}
+			});
+		},
 		
 		autoSave: false,	// auto save the editing row when click out of datagrid
 		url: null,	// return the datagrid data
@@ -416,7 +515,11 @@
 		onEdit: function(index, row){},
 		onBeforeSave: function(index){},
 		onSave: function(index, row){},
+		onSuccess: function(index, row){},
 		onDestroy: function(index, row){},
 		onError: function(index, row){}
 	});
+	
+	////////////////////////////////
+	$.parser.plugins.push('edatagrid');
 })(jQuery);

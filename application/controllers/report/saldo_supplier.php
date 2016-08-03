@@ -13,7 +13,7 @@ class Saldo_supplier extends CI_Controller {
 
         $auth->restrict();
         //$auth->cek_menu(14);
-        $this->load->view('report/saldo_supplier/v_dialog_saldo_supplier.php');
+        $this->load->view('report/saldo_supplier/v_dialog_saldo_supplier');
     }
 
     function get_supp()
