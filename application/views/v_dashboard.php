@@ -43,7 +43,7 @@
         function grid_refresh() {
             $('#grid-dashboard_overdue').datagrid('reload'); 
             $('#grid-dashboard_willoverdue').datagrid('reload');// reload grid
-            setTimeout(grid_refresh, 5000); // schedule next refresh after 15sec
+            setTimeout(grid_refresh, 1); // schedule next refresh after 15sec
         }
         $('#grid-dashboard_overdue').datagrid({view:scrollview,remoteFilter:true,
             url:'<?php echo site_url('dashboard/index'); ?>?grid=true'});

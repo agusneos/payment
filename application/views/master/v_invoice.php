@@ -8,10 +8,12 @@
     data-options="pageSize:100, multiSort:true, remoteSort:false, rownumbers:true, singleSelect:true, 
                 showFooter:false, fit:true, fitColumns:true, toolbar:toolbar_master_invoice">
     <thead>
-        <tr>           
+        <tr>
+            <th data-options="field:'ck',checkbox:true" ></th>
             <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
+            <th data-options="field:'Qty'"                  width="80"  align="center" sortable="true" formatter="decimalSparator">Quantity</th>
             <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
             <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
             <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
@@ -26,6 +28,16 @@
         iconCls:'icon-upload',
         handler:function(){upload();}
     },{
+        id      :'master_invoice-edit',
+        text    :'Edit',
+        iconCls :'icon-edit',
+        handler :function(){masterInvoiceEdit();}
+    },{
+        id      :'master_invoice-delete',
+        text    :'Delete',
+        iconCls :'icon-cancel',
+        handler :function(){masterInvoiceDelete();}
+    },{
         text:'Update Rate',
         iconCls:'icon-rate',
         handler:function(){updateRate();}
@@ -35,8 +47,29 @@
         handler:function(){$('#grid-master_invoice').datagrid('reload');}
     }];
     
-    $('#grid-master_invoice').datagrid({view:scrollview,remoteFilter:true,
-        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'}).datagrid('enableFilter');
+    $('#grid-master_invoice').datagrid({    
+        onClickRow      : function(index,row){
+            if (row.CheckDate != '0000-00-00 00:00:00')
+            {
+                $('#master_invoice-edit').linkbutton('disable');
+                $('#master_invoice-delete').linkbutton('disable');
+            }
+            else
+            {
+                $('#master_invoice-edit').linkbutton('enable');
+                $('#master_invoice-delete').linkbutton('enable');
+            }
+        },
+        view:scrollview,
+        remoteFilter:true,
+        url:'<?php echo site_url('master/invoice/index'); ?>?grid=true'})
+    .datagrid({
+        rowStyler:function(index,row){
+            if (row.CheckDate != '0000-00-00 00:00:00'){
+                return 'background-color:#990012;color:#fff;';
+            }
+        }
+    }).datagrid('enableFilter');
             
    function thousandSep(value,row,index)
     {
@@ -66,6 +99,18 @@
         }        
     }
     
+    function decimalSparator(value,row,index)
+    {
+        if (value == 0)
+        {
+            return "";
+        }        
+        else
+        {
+            return accounting.formatMoney(value, "", 0, ".", ",");
+        }        
+    }
+    
     function payterm(value,row,index) {
         if (value == 0){
             return value;
@@ -88,6 +133,129 @@
         
     }
     
+    function masterInvoiceEdit()
+    {
+        alert('On Progress');
+    }
+    
+    function masterInvoiceDelete()
+    {
+        var row = $('#grid-master_invoice').datagrid('getSelected');
+        if (row){
+            var win = $.messager.confirm('Konfirmasi','Anda yakin ingin menghapus Invoice \n'+row.InvoiceId+' ?',function(r){
+                if (r){
+                    $.post('<?php echo site_url('master/invoice/delete'); ?>',{InvoiceId:row.InvoiceId},function(result){
+                        if (result.success)
+                        {
+                            $('#grid-master_invoice').datagrid('reload');
+                            $.messager.show({
+                                title   : 'Info',
+                                msg     : '<div class="messager-icon messager-info"></div><div>Data Berhasil Dihapus</div>'
+                    });
+                        }
+                        else
+                        {
+                            $.messager.show({
+                                title   : 'Error',
+                                msg     : '<div class="messager-icon messager-error"></div><div>Data Gagal Dihapus !</div>'+result.error
+                            });
+                        }
+                    },'json');
+                }
+            });
+            win.find('.messager-icon').removeClass('messager-question').addClass('messager-warning');
+            win.window('window').addClass('bg-warning');
+        }
+        else
+        {
+             $.messager.alert('Info','Data belum dipilih !','info');
+        }
+    }
+    
+    function updateRate()
+    {
+        var date = new Date();
+        var yy = date.getYear();
+        var year = (yy < 1000) ? yy + 1900 : yy;
+        
+        $('#dlg-updateRate').dialog({modal: true}).dialog('open').dialog('setTitle','Update Rate');
+        $('#fm-updateRate').form('reset');
+        $('#tahun1').numberspinner('setValue',year);
+        
+        urls = '<?php echo site_url('master/invoice/updateRate'); ?>/';
+    }
+    
+    function updateRateSave()
+    {
+        $('#fm-updateRate').form('submit',{
+            url: urls,
+            onSubmit: function(){   
+                return $(this).form('validate');
+            },
+            success: function(result){
+                var result = eval('('+result+')');
+                if(result.success)
+                {                    
+                    $('#dlg-updateRate').dialog('close');
+                    $('#grid-master_invoice').datagrid('reload');
+                    $.messager.show({
+                        title: 'Info',
+                        msg: 'Ubah Rate Berhasil'
+                    });
+                } 
+                else 
+                {
+                    $.messager.show({
+                    title: 'Error',
+                    msg: 'Ubah Rate Gagal'
+                });
+                }
+            }
+        });
+    }
+    
+    function upload()
+    {
+        $('#dlg-upload').dialog({modal: true}).dialog('open').dialog('setTitle','Upload File');
+        $('#fm-upload').form('reset');
+        urls = '<?php echo site_url('master/invoice/upload'); ?>/';
+    }
+    
+    function uploadSave()
+    {
+        $.messager.progress({
+            title   :'Please waiting',
+            msg     :'Uploading data...'
+        });
+        $('#fm-upload').form('submit',{
+            url: urls,
+            onSubmit: function(){   
+                return $(this).form('validate');
+            },
+            success: function(result){
+                var result = eval('('+result+')');
+                if(result.success)
+                {
+                    
+                    $('#dlg-upload').dialog('close');
+                    $('#grid-master_invoice').datagrid('reload');
+                    $.messager.show({
+                            title: 'Info',
+                            msg: result.total + ' ' +result.ok + ' ' + result.ng
+                            });
+                    $.messager.progress('close');
+                } 
+                else 
+                {
+                    $.messager.show({
+                        title: 'Error',
+                        msg: 'Upload Data Gagal'
+                    });
+                    $.messager.progress('close');
+                }
+            }
+        });
+    }
 </script>
 
 
@@ -170,88 +338,6 @@
     <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg-updateRate').dialog('close')">Batal</a>
 </div>
 
-<script type="text/javascript">  
-    function updateRate()
-    {
-        var date = new Date();
-        var yy = date.getYear();
-        var year = (yy < 1000) ? yy + 1900 : yy;
-        
-        $('#dlg-updateRate').dialog({modal: true}).dialog('open').dialog('setTitle','Update Rate');
-        $('#fm-updateRate').form('reset');
-        $('#tahun1').numberspinner('setValue',year);
-        
-        urls = '<?php echo site_url('master/invoice/updateRate'); ?>/';
-    }
-    
-    function updateRateSave()
-    {
-        $('#fm-updateRate').form('submit',{
-            url: urls,
-            onSubmit: function(){   
-                return $(this).form('validate');
-            },
-            success: function(result){
-                var result = eval('('+result+')');
-                if(result.success)
-                {                    
-                    $('#dlg-updateRate').dialog('close');
-                    $('#grid-master_invoice').datagrid('reload');
-                    $.messager.show({
-                        title: 'Info',
-                        msg: 'Ubah Rate Berhasil'
-                    });
-                } 
-                else 
-                {
-                    $.messager.show({
-                    title: 'Error',
-                    msg: 'Ubah Rate Gagal'
-                });
-                }
-            }
-        });
-    }
-    
-    function upload()
-    {
-        $('#dlg-upload').dialog({modal: true}).dialog('open').dialog('setTitle','Upload File');
-        $('#fm-upload').form('reset');
-        urls = '<?php echo site_url('master/invoice/upload'); ?>/';
-    }
-    
-    function uploadSave()
-    {
-        $('#fm-upload').form('submit',{
-            url: urls,
-            onSubmit: function(){   
-                return $(this).form('validate');
-            },
-            success: function(result){
-                var result = eval('('+result+')');
-                if(result.success)
-                {
-                    
-                    $('#dlg-upload').dialog('close');
-                    $('#grid-master_invoice').datagrid('reload');
-                    $.messager.show({
-                            title: 'Info',
-                            msg: result.total + ' ' +result.ok + ' ' + result.ng
-                            });
-                } 
-                else 
-                {
-                    $.messager.show({
-                    title: 'Error',
-                    msg: 'Upload Data Gagal'
-                });
-                }
-            }
-        });
-    }
-    
-</script>
-        
 <!-- Toolbar -->
 
 

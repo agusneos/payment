@@ -42,6 +42,7 @@
         {
             for(var i=0; i<rows.length; i++)
             {
+                
                 var row = rows[i];
                 $.post('<?php echo site_url('transaksi/check/update'); ?>',
                     {InvoiceId      : row.InvoiceId,
@@ -57,10 +58,10 @@
                      ExchRate:row.ExchRate},'json');
             }
             $('#grid-transaksi_check').datagrid('reload');
-            $('#grid-transaksi_check').datagrid('reload');
+            //$('#grid-transaksi_check').datagrid('reload');
             
              $.messager.alert('Info','Check Data Berhasil !','info', function(){
-                $('#grid-transaksi_check').datagrid('reload');
+               // $('#grid-transaksi_check').datagrid('reload');
                 $('#grid-transaksi_check').datagrid('reload');
             });
         }

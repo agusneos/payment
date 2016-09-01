@@ -50,17 +50,19 @@ class M_invoice extends CI_Model
             }
 	}
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, 
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, CheckDate,
                             IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
+                 //->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
 
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode,
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, CheckDate,
                             IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
                             IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE);
+                 //->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -81,18 +83,57 @@ class M_invoice extends CI_Model
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                     $SalesBalance, $CurrencyCode, $ExchRate)
     {
-        date_default_timezone_set('Asia/Jakarta');
-        $InvoiceDate = date("Y-m-d",($InvoiceDate - 25569)*86400);
+        $this->db->select('Tax');
+        $this->db->where('Id', $OrderAccount);
+        $query  = $this->db->get(self::$vendor);
+        $rowa = $query->row();
         
-        return $this->db->simple_query('INSERT INTO vendinvoicejour (OrderAccount, InvoiceId, InvoiceDate,
-                Qty, SalesBalance, Tax, CurrencyCode, ExchRate, CheckDate, PaymentSisa) 
-                SELECT "'.$OrderAccount.'","'.$InvoiceId.'","'.$InvoiceDate.'",'.$Qty.','
-                    .$SalesBalance.',Tax,"'.$CurrencyCode.'",'.$ExchRate.',
-                    "0000-00-00 00:00:00", '.$SalesBalance.' 
-                FROM Vendor WHERE Id = "'.$OrderAccount.'"');
-
+        if($rowa){
+            $this->db->select('Id');
+            $this->db->where('InvoiceId', $InvoiceId);
+            $queryb  = $this->db->get(self::$table);
+            $rowb = $queryb->row();
+            if($rowb){
+                return FALSE;
+            }
+            else{
+                $querya = $this->db->insert(self::$table,array(
+                    'OrderAccount'  => $OrderAccount,
+                    'InvoiceId'     => $InvoiceId,
+                    'InvoiceDate'   => $InvoiceDate,
+                    'Qty'           => $Qty,
+                    'SalesBalance'  => $SalesBalance,
+                    'Tax'           => $rowa->Tax,
+                    'CurrencyCode'  => $CurrencyCode,
+                    'ExchRate'      => $ExchRate,
+                    'PaymentSisa'   => $SalesBalance
+                ));
+                if($querya){
+                    return TRUE;
+                }
+                else{
+                    return FALSE;
+                }
+            }            
+        }
+        else{
+            return FALSE;
+        }
     }
         
+    function delete($InvoiceId)
+    {
+        $query = $this->db->delete(self::$table, array('InvoiceId' => $InvoiceId));
+        if($query)
+        {
+            return json_encode(array('success'=>true));
+        }
+        else
+        {
+            return json_encode(array('success'=>false,'error'=>'Gagal'));
+        }
+    }
+    
     function updateRate()
     {
         $bulan  = $this->input->post('bulan1',true);

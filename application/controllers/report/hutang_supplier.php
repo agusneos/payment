@@ -24,7 +24,8 @@ class Hutang_supplier extends CI_Controller {
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        $data['rows'] = $this->record->cetak_hutang_supplier_summary();
+        //$data['rows'] = $this->record->cetak_hutang_supplier_summary($_GET['nilai']);
+        $data = $this->record->cetak_hutang_supplier_summary($_GET['nilai']);
         $this->load->view('report/hutang_supplier/v_hutang_supplier_summary.php',$data);
     }
     
@@ -36,7 +37,7 @@ class Hutang_supplier extends CI_Controller {
         //$auth->cek_menu(14);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        $data['rows'] = $this->record->cetak_hutang_supplier_detail();
+        $data = $this->record->cetak_hutang_supplier_detail($_GET['nilai']);
         $this->load->view('report/hutang_supplier/v_hutang_supplier_detail.php',$data);
     }
     

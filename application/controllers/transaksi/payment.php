@@ -27,8 +27,9 @@ class Payment extends CI_Controller {
         if(!isset($_POST))	
             show_404();        
         $InvoiceId              = addslashes($_POST['InvoiceId']);
+        $PayDate                = addslashes($_POST['PayDate']);
        
-        if($this->record->update($InvoiceId))
+        if($this->record->update($InvoiceId, $PayDate))
         {
             echo json_encode(array('success'=>true));
         }

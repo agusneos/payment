@@ -56,7 +56,7 @@ class M_payment extends CI_Model
                             IF(Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);        
         $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 ->where('PaymentSisa !=', 0);
+                 ->where('PayDate', '0000-00-00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
@@ -65,7 +65,7 @@ class M_payment extends CI_Model
                             IF(Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
-                 ->where('PaymentSisa !=', 0);
+                 ->where('PayDate', '0000-00-00');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
         $query  = $this->db->get(self::$table);
@@ -83,11 +83,11 @@ class M_payment extends CI_Model
         return json_encode($result);          
     }
     
-    function update($InvoiceId)
+    function update($InvoiceId, $PayDate)
     {    
         $this->db->where('InvoiceId', $InvoiceId);
         return $this->db->update(self::$table,array(
-            'PaymentSisa'         => $this->input->post('PaymentSisa',true)
+            'PayDate'         => $PayDate
         ));
     }        
     

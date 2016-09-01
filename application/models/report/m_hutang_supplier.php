@@ -10,43 +10,61 @@ class M_hutang_supplier extends CI_Model
         
     }
       
-    function cetak_hutang_supplier_summary()
+    function cetak_hutang_supplier_summary($date)
     {       
         $sql        = 'SELECT Name,
-                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
-                        SUM(IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
+                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance))) AS InvoiceAmount,
+                        SUM(IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance) * ExchRate) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
                        LEFT JOIN '.self::$table2.'
                        ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
                        
-                       WHERE PaymentSisa != 0
+                       WHERE PayDate >"'.$date.'" OR PayDate ="0000-00-00"
                                  
                        GROUP BY Name
                              
                        ORDER BY Name ASC';
-        return $this->db->query($sql);
+        //return $this->db->query($sql);
+        $detail = $this->db->query($sql);
+        
+        $tgl = $this->db->query('SELECT "'.$date.'" as Tanggal');
+        
+        $result = array();
+	$result['date'] = $tgl;
+	$result['rows'] = $detail;
+        
+        return $result;
     }
     
-    function cetak_hutang_supplier_detail()
+    function cetak_hutang_supplier_detail($date)
     {       
         $sql        = 'SELECT Name, MONTH(InvoiceDate) AS Bulan,
                         YEAR(InvoiceDate) AS Tahun,
-                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa))) AS InvoiceAmount,
-                        SUM(IF ('.self::$table1.'.Tax = "PPN",  PaymentSisa * 1.1, PaymentSisa) * ExchRate) AS InvoiceAmountIdr
+                        SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance))) AS InvoiceAmount,
+                        SUM(IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance) * ExchRate) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
                        LEFT JOIN '.self::$table2.'
                        ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
                        
-                       WHERE PaymentSisa != 0
+                       WHERE PayDate >"'.$date.'" OR PayDate ="0000-00-00"
                                  
                        GROUP BY Name, Bulan, Tahun
                              
                        ORDER BY Name ASC, Tahun ASC, Bulan ASC';
-        return $this->db->query($sql);        
+        //return $this->db->query($sql);
+        $detail = $this->db->query($sql);
+        
+        $tgl = $this->db->query('SELECT "'.$date.'" as Tanggal');
+        
+        $result = array();
+	$result['date'] = $tgl;
+	$result['rows'] = $detail;
+        
+        return $result;
     }
        
     

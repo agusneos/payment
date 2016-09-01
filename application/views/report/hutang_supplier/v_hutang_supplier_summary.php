@@ -47,6 +47,14 @@ function hari_ini()
     //return $st;
 }
 
+function tgal($date)
+{
+    setlocale (LC_TIME, 'INDONESIAN');
+    $st = strftime( "%d %B %Y", strtotime($date));
+    return strtoupper($st);
+    //return $st;
+}
+
 function ppn($salesbalance, $tax)
 {
     if ($tax == 'PPN')
@@ -86,7 +94,9 @@ $height = 0.5;
 $pdf->SetFont('Arial','',16);
 $pdf->Cell(0,$height*1.5,'SUMMARY HUTANG USAHA',0,0,'C');
 $pdf->Ln($height*1.5);
-$pdf->Cell(0,$height*1.5,'PER '.  hari_ini(),0,0,'C');
+$row = $date->first_row();
+$pdf->Cell(0,$height*1.5,'PER '.  tgal($row->Tanggal),0,0,'C');
+//$pdf->Cell(0,$height*1.5,'PER '.  hari_ini(),0,0,'C');
 //$pdf->Ln($height*2);
 
 // START LOKAL //
