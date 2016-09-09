@@ -57,37 +57,29 @@ class Payment extends CI_Controller {
         }
     }
     
-    
-    /*
-    function createVoucherInvoice()
-    {
+    function split(){
         $auth   = new Auth();
         $auth->restrict();
-        
         if(!isset($_POST))	
-            show_404();        
-        //$id                 = intval(addslashes($_POST['id']));
-        $OrderAccount       = addslashes($_POST['OrderAccount']);
-        $PaymentNumber      = addslashes($_POST['PaymentNumber']);
-        $PaymentDate        = addslashes($_POST['PaymentDate']); 
-        $CurrencyCode       = addslashes($_POST['CurrencyCode']); 
-        $ExchRate           = addslashes($_POST['ExchRate']);
-        $InvoiceAmount      = addslashes($_POST['InvoiceAmount']);
-        $InvoiceAmountMST   = addslashes($_POST['InvoiceAmountMST']);
-        $PaymentCreateDate  = addslashes($_POST['PaymentCreateDate']);
+            show_404();
         
-        if($this->record->createVoucherInvoice())
-        {
-            echo json_encode(array('success'=>true));
-        }
-        else
-        {
-            echo json_encode(array('success'=>false));
-        }
+        $id             = addslashes($_POST['Id']);
+        $sum            = addslashes($_POST['Sum']);
+        $sisa           = addslashes($_POST['Sisa']);
+        
+        echo $this->record->split($id, $sum, $sisa);
     }
-     * 
-     */   
-
+    
+    function delete(){
+        $auth   = new Auth();
+        $auth->restrict();
+        if(!isset($_POST))	
+            show_404();
+        
+        $id             = addslashes($_POST['InvoiceId']);
+        
+        echo $this->record->delete($id);
+    }
 }
 
 /* End of file payment.php */

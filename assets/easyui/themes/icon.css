@@ -210,3 +210,9 @@
 .icon-hammer_plus{
 	background:url('icons/hammer_plus.png') no-repeat center center;
 }
+.icon-split{
+	background:url('icons/split.png') no-repeat center center;
+}
+.icon-merge{
+	background:url('icons/merge.png') no-repeat center center;
+}

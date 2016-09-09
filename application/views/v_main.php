@@ -8,7 +8,14 @@
     <link rel="stylesheet" type="text/css" href="<?=base_url('assets/easyui/themes/default/easyui.css')?>">
     <link rel="stylesheet" type="text/css" href="<?=base_url('assets/easyui/themes/icon.css')?>">
     <script type="text/javascript" src="<?=base_url('assets/easyui/jquery.min.js')?>"></script>
-    <script type="text/javascript" src="<?=base_url('assets/easyui/jquery.easyui.min.js')?>"></script>
+    <script type="text/javascript" src="<?=base_url('assets/easyui/jquery.easyui.min.js')?>"></script>   
+    <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
+    <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
+    <script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
+    
+    <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
+    <script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
+    <script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
     <script type="text/javascript">
         var url;        
         function add_tab(title, url, iconCls, type){
@@ -132,6 +139,9 @@
             display:inline-block;
             width:80px;
         }
+        .easyui-numberbox {
+            text-align: right;
+	}
     </style>
     
 </head>

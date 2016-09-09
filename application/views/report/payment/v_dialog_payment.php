@@ -22,11 +22,11 @@
     });
 </script>
 <style type="text/css">
-    #fm-dialog_saldo_supplier{
+    #fm-dialog_payment{
         margin:0;
         padding:20px 30px;
     }
-    #dlg_btn-dialog_saldo_supplier{
+    #dlg_btn-dialog_payment{
         margin:0;
         padding:10px 100px;
     }
@@ -46,45 +46,28 @@
     }
 </style>
 <!-- Form -->
-    <form id="fm-dialog_saldo_supplier" method="post" novalidate buttons="#dlg_btn-dialog_saldo_supplier">
+    <form id="fm-dialog_payment" method="post" novalidate buttons="#dlg_btn-dialog_payment">
         <div class="fitem">
-            <label for="type">Vendor</label>
-            <input id="vendor" name="vendor" class="easyui-combobox" data-options="
-                url:'<?php echo site_url('report/saldo_supplier/get_supp'); ?>',
-                method:'get', valueField:'Id', textField:'Name', panelHeight:200" style="width:300px;" required/>
-        </div>
-        <div class="fitem">
-            <label for="type">Dari</label>
-            <input id="dari" name="dari" class="easyui-datebox" data-options="required:true" style="width:100px;" />
-        </div>
-        <div class="fitem">
-            <label for="type">Sampai</label>
-            <input id="sampai" name="sampai" class="easyui-datebox" data-options="required:true" style="width:100px;" />
+            <label for="type">Tanggal Pengerjaan</label>
+            <input  id="tglDo" name="tglDo" class="easyui-datebox" style="width:100px;" required>
         </div>
     </form>
 
 <!-- Dialog Button -->
-<div id="dlg_btn-dialog_saldo_supplier">
-    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="cetak_saldo_supplier()">Cetak</a>
+<div id="dlg_btn-dialog_payment">
+    <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-ok" onclick="cetak_payment()">Cetak</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" data-options="width:75" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">Batal</a>
 </div>
 
 <script type="text/javascript">
-    function cetak_saldo_supplier()
+    function cetak_payment()
     {
-        var isValid = $('#fm-dialog_saldo_supplier').form('validate');
-        if (isValid)
-        {           
-            //var tahun2  = $('#tahun2').numberbox('getValue');            
-            var vendor  = $('#vendor').combobox('getValue');
-            var from    = $('#dari').datebox('getValue');
-            var to      = $('#sampai').datebox('getValue');
-            //var vt      = vendor+'-'+tahun2;
-            //var url     = '<?php echo site_url('report/saldo_supplier/cetak_saldo_supplier'); ?>/' + vt;
-            var url     = '<?php echo site_url('report/saldo_supplier/cetak_saldo_supplier'); ?>?from='+from+'&to='+to+'&vend='+vendor;
+        var isValid = $('#fm-dialog_payment').form('validate');
+        if (isValid){
+            var tanggal = $('#tglDo').datebox('getValue');   
+            var url     = '<?php echo site_url('report/payment/cetak_payment'); ?>?nilai='+tanggal;
             var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
-            var title   = vendor;
-            
+            var title   = 'Summary Hutang Supplier';
             if ($('#tt').tabs('exists', title))
             {
                 $('#tt').tabs('select', title);
@@ -93,7 +76,7 @@
             else 
             {
                 $('#tt').tabs('add',{
-                    title:vendor,
+                    title:title+' '+tanggal,
                     content:content,
                     closable:true,
                     iconCls:'icon-print'
@@ -105,5 +88,5 @@
     }
 </script>
 
-<!-- End of file v_dialog_saldo_supplier.php -->
-<!-- Location: ./views/report/saldo_supplier/v_dialog_saldo_supplier.php -->
+<!-- End of file v_dialog_payment.php -->
+<!-- Location: ./views/report/payment/v_dialog_payment.php -->

@@ -1,7 +1,5 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
+
 
 <!-- Data Grid -->
 <table id="grid-master_invoice"
@@ -10,13 +8,13 @@
     <thead>
         <tr>
             <th data-options="field:'ck',checkbox:true" ></th>
-            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
+            <th data-options="field:'Id'"                   width="80"  align="center" sortable="true" >Id</th>
+            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true" >Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
             <th data-options="field:'Qty'"                  width="80"  align="center" sortable="true" formatter="decimalSparator">Quantity</th>
-            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
-            <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
-            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
+            <th data-options="field:'ExchRate'"             width="80"  align="center" sortable="true" formatter="decimalSparator">Exch. Rate</th>
+            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
         </tr>
     </thead>
 </table>
@@ -71,42 +69,32 @@
         }
     }).datagrid('enableFilter');
             
-   function thousandSep(value,row,index)
-    {
-        if (value == 0)
-        {
+   function thousandSep(value,row,index){
+        if (value == 0){
             return "";
         }
-        else if (row.CurrencyCode == "IDR")
-        {
+        else if (row.CurrencyCode == "IDR"){
             return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
         }
-        else
-        {
+        else{
             return accounting.formatMoney(value, "$ ", 2, ".", ",");
         }        
     }
     
-    function thousandSepIDR(value,row,index)
-    {
-        if (value == 0)
-        {
+    function thousandSepIDR(value,row,index){
+        if (value == 0){
             return "";
         }        
-        else
-        {
+        else{
             return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
         }        
     }
     
-    function decimalSparator(value,row,index)
-    {
-        if (value == 0)
-        {
+    function decimalSparator(value,row,index){
+        if (value == 0){
             return "";
         }        
-        else
-        {
+        else{
             return accounting.formatMoney(value, "", 0, ".", ",");
         }        
     }
@@ -114,7 +102,8 @@
     function payterm(value,row,index) {
         if (value == 0){
             return value;
-        } else {
+        } 
+        else {
             return value +' Hari';
         }           
     }
@@ -131,11 +120,6 @@
         today = yyyy+'-'+mm+'-'+dd+' '+hh+':'+min+':'+ss;
         return today;
         
-    }
-    
-    function masterInvoiceEdit()
-    {
-        alert('On Progress');
     }
     
     function masterInvoiceDelete()
@@ -328,6 +312,9 @@
             <label for="type">Rate</label>
             <input id="rate1" name="rate1" class="easyui-numberbox" required="true"
                    data-options="groupSeparator:'.',decimalSeparator:',', precision:0"/>
+        </div>
+        <div class="fitem">
+            <label for="type" style="width:300px;">Update Rate hanya berlaku untuk currency USD dan belum dilakukan Cek invoice</label>
         </div>
     </form>
 </div>

@@ -14,7 +14,7 @@ class M_invoice extends CI_Model
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
         $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
-        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
+        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'Id';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
         
         $filterRules = isset($_POST['filterRules']) ? ($_POST['filterRules']) : '';
@@ -50,17 +50,15 @@ class M_invoice extends CI_Model
             }
 	}
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, CheckDate,
-                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE);
                  //->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
 
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, CheckDate,
-                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE);
                  //->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->order_by($sort, $order);
@@ -97,16 +95,17 @@ class M_invoice extends CI_Model
                 return FALSE;
             }
             else{
+                if($rowa->Tax == 'PPN'){
+                    $SalesBalance = $SalesBalance*1.1;
+                }
                 $querya = $this->db->insert(self::$table,array(
                     'OrderAccount'  => $OrderAccount,
                     'InvoiceId'     => $InvoiceId,
                     'InvoiceDate'   => $InvoiceDate,
                     'Qty'           => $Qty,
                     'SalesBalance'  => $SalesBalance,
-                    'Tax'           => $rowa->Tax,
                     'CurrencyCode'  => $CurrencyCode,
-                    'ExchRate'      => $ExchRate,
-                    'PaymentSisa'   => $SalesBalance
+                    'ExchRate'      => $ExchRate
                 ));
                 if($querya){
                     return TRUE;
@@ -141,6 +140,7 @@ class M_invoice extends CI_Model
         $rate   = $this->input->post('rate1',true);
         
         $this->db->where('CurrencyCode', 'USD')
+                 ->where('AcceptDate', '0000-00-00')
                  ->where('MONTH(InvoiceDate)', $bulan)
                  ->where('YEAR(InvoiceDate)', $tahun);
         return $this->db->update(self::$table,array(

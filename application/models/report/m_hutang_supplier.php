@@ -13,6 +13,90 @@ class M_hutang_supplier extends CI_Model
     function cetak_hutang_supplier_summary($date)
     {       
         $sql        = 'SELECT Name,
+                        SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
+                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                       
+                       FROM '.self::$table1.'
+                
+                       LEFT JOIN '.self::$table2.'
+                       ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
+                       
+                       WHERE (PayDate >"'.$date.'" OR PayDate ="0000-00-00") AND AcceptDate <> "0000-00-00"
+                                 
+                       GROUP BY Name
+                             
+                       ORDER BY Name ASC';
+        $detail = $this->db->query($sql);
+        
+        $tgl = $this->db->query('SELECT "'.$date.'" as Tanggal');
+        
+        $result = array();
+	$result['date'] = $tgl;
+	$result['rows'] = $detail;
+        
+        return $result;
+    }
+    
+    function cetak_hutang_supplier_detail($date)
+    {       
+        $sql        = 'SELECT Name, MONTH(AcceptDate) AS Bulan,
+                        YEAR(AcceptDate) AS Tahun,
+                        SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
+                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                       
+                       FROM '.self::$table1.'
+                
+                       LEFT JOIN '.self::$table2.'
+                       ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
+                       
+                       WHERE (PayDate >"'.$date.'" OR PayDate ="0000-00-00") AND AcceptDate <> "0000-00-00"
+                                 
+                       GROUP BY Name, Bulan, Tahun
+                             
+                       ORDER BY Name ASC, Tahun ASC, Bulan ASC';
+        //return $this->db->query($sql);
+        $detail = $this->db->query($sql);
+        
+        $tgl = $this->db->query('SELECT "'.$date.'" as Tanggal');
+        
+        $result = array();
+	$result['date'] = $tgl;
+	$result['rows'] = $detail;
+        
+        return $result;
+    }
+    
+    function cetak_hutang_supplier_invoice($date)
+    {       
+        $sql        = 'SELECT Name, InvoiceId,
+                        SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
+                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                       
+                       FROM '.self::$table1.'
+                
+                       LEFT JOIN '.self::$table2.'
+                       ON '.self::$table1.'.OrderAccount = '.self::$table2.'.Id
+                       
+                       WHERE (PayDate >"'.$date.'" OR PayDate ="0000-00-00") AND AcceptDate <> "0000-00-00"
+                                 
+                       GROUP BY Name, InvoiceId
+                             
+                       ORDER BY Name ASC, InvoiceId ASC';
+        //return $this->db->query($sql);
+        $detail = $this->db->query($sql);
+        
+        $tgl = $this->db->query('SELECT "'.$date.'" as Tanggal');
+        
+        $result = array();
+	$result['date'] = $tgl;
+	$result['rows'] = $detail;
+        
+        return $result;
+    }
+    
+    function cetak_hutang_supplier_summary_bak($date)
+    {       
+        $sql        = 'SELECT Name,
                         SUM(IF(CurrencyCode = "IDR","",IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance))) AS InvoiceAmount,
                         SUM(IF ('.self::$table1.'.Tax = "PPN",  SalesBalance * 1.1, SalesBalance) * ExchRate) AS InvoiceAmountIdr
                        
@@ -38,7 +122,7 @@ class M_hutang_supplier extends CI_Model
         return $result;
     }
     
-    function cetak_hutang_supplier_detail($date)
+    function cetak_hutang_supplier_detail_bak($date)
     {       
         $sql        = 'SELECT Name, MONTH(InvoiceDate) AS Bulan,
                         YEAR(InvoiceDate) AS Tahun,
@@ -66,8 +150,6 @@ class M_hutang_supplier extends CI_Model
         
         return $result;
     }
-       
-    
 }
 
 /*

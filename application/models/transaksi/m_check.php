@@ -51,17 +51,15 @@ class M_check extends CI_Model
             }
 	}
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, ExchRate, 
-                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, CurrencyCode, ExchRate,
-                            IF(Tax = "PPN", SalesBalance * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", SalesBalance * 1.1, SalesBalance) AS InvoiceAmount', FALSE);
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE)
                     ->where('CheckDate', '0000-00-00 00:00:00');
         $this->db->order_by($sort, $order);
@@ -84,14 +82,16 @@ class M_check extends CI_Model
     function update($InvoiceId)
     {
 
-        $this->db->where('InvoiceId', $InvoiceId);
+        $this->db->where('Id', $InvoiceId);
         return $this->db->update(self::$table,array(            
-            'CheckDate'     => $this->input->post('checkdate',true)
+            'CheckDate'     => $this->input->post('checkdate',true),
+            'AcceptDate'    => $this->input->post('AcptDt',true)
         ));
     }
     
     function createVoucher()
     {
+        $Id                 = $this->input->post('Id',true);
         $OA                 = $this->input->post('OrderAccount',true);
         $PD                 = $this->input->post('PaymentDate',true);
         $Ket                = $this->input->post('PaymentNumber',true);
@@ -146,14 +146,15 @@ class M_check extends CI_Model
         }
                
         return $this->db->insert(self::$voucher,array(
-            'OrderAccount'  => $OrderAccount,
-            'PaymentDate'   => $PaymentDate,
-            'PaymentNumber' => $PaymentNumber,
-            'Note'          => $Note,
-            'DebetUSD'      => round($DebetUSD, 2),
-            'DebetIDR'      => round($DebetIDR, 0),
-            'KreditUSD'     => round($KreditUSD, 2),
-            'KreditIDR'     => round($KreditIDR, 0)
+            'VendInvoiceJour_Id'    => $Id,
+            'OrderAccount'          => $OrderAccount,
+            'PaymentDate'           => $PaymentDate,
+            'PaymentNumber'         => $PaymentNumber,
+            'Note'                  => $Note,
+            'DebetUSD'              => round($DebetUSD, 2),
+            'DebetIDR'              => round($DebetIDR, 0),
+            'KreditUSD'             => round($KreditUSD, 2),
+            'KreditIDR'             => round($KreditIDR, 0)
         ));
     }
     

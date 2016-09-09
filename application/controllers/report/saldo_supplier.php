@@ -29,11 +29,14 @@ class Saldo_supplier extends CI_Controller {
         $auth   = new Auth();
         $auth->restrict();
         
-        //$auth->cek_menu(14);
+        $vendor = addslashes($_GET['vend']);
+        $from   = addslashes($_GET['from']);
+        $to     = addslashes($_GET['to']);
         
         define('FPDF_FONTPATH',$this->config->item('fonts_path'));
-        $vt = $this->uri->segment(4);
-        $data['rows'] = $this->record->cetak_saldo_supplier($vt);
+        //$vt = $this->uri->segment(4);
+        //$data['rows'] = $this->record->cetak_saldo_supplier($vt);
+        $data = $this->record->cetak_saldo_supplier_date($vendor, $from, $to);
         $this->load->view('report/saldo_supplier/v_saldo_supplier.php',$data);
     }
     

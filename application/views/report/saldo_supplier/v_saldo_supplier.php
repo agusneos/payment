@@ -5,6 +5,15 @@ foreach($rows->result() as $data)
     
 }
 
+foreach($date->result() as $dataa)
+{
+    
+}
+global $from;
+global $to;
+$from   = $dataa->Dari;
+$to     = $dataa->Sampai;
+
 $tanggal = isset($data->PaymentDate);
 if ($tanggal)
 {    
@@ -29,6 +38,14 @@ class PDF extends FPDF
         return strtoupper($st);
     }
     
+    function tgal($date)
+    {
+        setlocale (LC_TIME, 'INDONESIAN');
+        $st = strftime( "%d %B %Y", strtotime($date));
+        return strtoupper($st);
+        //return $st;
+    }
+    
     function Header()
     {        
         $this->SetTextColor(0, 0, 0);
@@ -51,7 +68,10 @@ class PDF extends FPDF
         $this->Cell(0,0.5*1.5,$vendor,0,0,'C');
         $this->Ln(0.5*1.5);
         $tahun = $GLOBALS['tahun'];
-        $this->Cell(0,0.5*1.5,$this->tahun($tahun),0,0,'C');
+        $from   = $GLOBALS['from'];
+        $to     = $GLOBALS['to'];
+        //$this->Cell(0,0.5*1.5,$this->tahun($tahun),0,0,'C');
+        $this->Cell(0,0.5*1.5,  $this->tgal($from).' SAMPAI '.$this->tgal($to),0,0,'C');
         $this->Ln(0.5*2);
 
         $this->SetFont('Arial','B',7);

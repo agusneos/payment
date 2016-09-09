@@ -1,7 +1,4 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/accounting/accounting.js')?>"></script>
 
 <!-- Data Grid -->
 <table id="grid-dashboard_overdue" title="Invoice Overdue" style="height:250px"
@@ -9,13 +6,12 @@
                     singleSelect:true, fit:false, fitColumns:true">
     <thead>
         <tr>
-            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
+            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true" >Vendor</th>
             <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
-            <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>            
-            <th data-options="field:'JatuhTempo'"          width="80"  align="center" sortable="true" >Jatuh Tempo</th>
-            <th data-options="field:'PaymentSisa'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
-            <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
-            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
+            <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
+            <th data-options="field:'AcceptDate'"           width="80"  align="center" sortable="true" >Accept Date</th>
+            <th data-options="field:'JatuhTempo'"           width="80"  align="center" sortable="true" >Jatuh Tempo</th> 
+            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
         </tr>
     </thead>
 </table>
@@ -27,13 +23,12 @@
                     singleSelect:true, fit:false, fitColumns:true">
     <thead>
         <tr>
-            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true">Vendor</th>
-            <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>
+            <th data-options="field:'OrderAccount'"         width="80"  align="center" sortable="true" >Vendor</th>
+            <th data-options="field:'InvoiceId'"            width="150" align="center" sortable="true" >Invoice</th>            
             <th data-options="field:'InvoiceDate'"          width="80"  align="center" sortable="true" >Invoice Date</th>
-            <th data-options="field:'JatuhTempo'"          width="80"  align="center" sortable="true" >Jatuh Tempo</th>
-            <th data-options="field:'PaymentSisa'"         width="80"  align="center" sortable="true" formatter="thousandSep" >DPP Amount</th>
-            <th data-options="field:'Ppn'"                  width="80"  align="center" sortable="true" formatter="thousandSep" >PPN</th>   
-            <th data-options="field:'InvoiceAmount'"        width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
+            <th data-options="field:'AcceptDate'"           width="80"  align="center" sortable="true" >Accept Date</th>
+            <th data-options="field:'JatuhTempo'"           width="80"  align="center" sortable="true" >Jatuh Tempo</th> 
+            <th data-options="field:'SalesBalance'"         width="80"  align="center" sortable="true" formatter="thousandSep" >Invoice Amount</th>   
         </tr>
     </thead>
 </table>
@@ -43,27 +38,23 @@
         function grid_refresh() {
             $('#grid-dashboard_overdue').datagrid('reload'); 
             $('#grid-dashboard_willoverdue').datagrid('reload');// reload grid
-            setTimeout(grid_refresh, 1); // schedule next refresh after 15sec
+            setTimeout(grid_refresh, 30000); // schedule next refresh after 30 sec
         }
         $('#grid-dashboard_overdue').datagrid({view:scrollview,remoteFilter:true,
             url:'<?php echo site_url('dashboard/index'); ?>?grid=true'});
          $('#grid-dashboard_willoverdue').datagrid({view:scrollview,remoteFilter:true,
             url:'<?php echo site_url('dashboard/willindex'); ?>?grid=true'});
-       // grid_refresh();
+        grid_refresh();
     });
     
-    function thousandSep(value,row,index)
-    {
-        if (value == 0)
-        {
+    function thousandSep(value,row,index){
+        if (value == 0){
             return "";
         }
-        else if (row.CurrencyCode == "IDR")
-        {
+        else if (row.CurrencyCode == "IDR"){
             return accounting.formatMoney(value, "Rp. ", 0, ".", ",");
         }
-        else
-        {
+        else{
             return accounting.formatMoney(value, "$ ", 2, ".", ",");
         }        
     }   

@@ -1,6 +1,4 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');?>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-scrollview.js')?>"></script>
-<script type="text/javascript" src="<?=base_url('assets/easyui/datagrid-filter.js')?>"></script>
 
 <!-- Data Grid -->
 <table id="grid-master_vendor"

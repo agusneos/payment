@@ -24,7 +24,7 @@ $pdf = new PDF();
 // variable awal
 date_default_timezone_set('Asia/Jakarta');
 $pdf->FPDF("P","cm","A4");
-$pdf->SetMargins(1,1,1);
+$pdf->SetMargins(0.5,1,1);
 //$pdf->AliasNbPages();
 $pdf->AddPage();
 
@@ -92,7 +92,7 @@ function bulan_tahun($bulan, $tahun)
 //$tanggal = isset($data->InvoiceDate);
 $height = 0.5;
 $pdf->SetFont('Arial','',16);
-$pdf->Cell(0,$height*1.5,'DETAIL HUTANG USAHA',0,0,'C');
+$pdf->Cell(0,$height*1.5,'DETAIL INVOICE HUTANG USAHA',0,0,'C');
 $pdf->Ln($height*1.5);
 //$pdf->Cell(0,$height*1.5,'PER '.  hari_ini(),0,0,'C');
 $row = $date->first_row();
@@ -107,7 +107,7 @@ $pdf->SetFont('Arial','',9);
 $pdf->Cell(0.5,$height,'',0,0,'C');
 $pdf->Cell(1,$height,'NO',1,0,'C');
 $pdf->Cell(7,$height,'NAMA SUPPLIER',1,0,'C');
-$pdf->Cell(3,$height,'BULAN',1,0,'C');
+$pdf->Cell(4,$height,'INVOICE',1,0,'C');
 //$pdf->Cell(2,$height,'TAHUN',1,0,'C');
 $pdf->Cell(3.5,$height,'INVOICE AMOUNT',1,0,'C');
 $pdf->Cell(3.5,$height,'INVOICE AMOUNT IDR',1,0,'C');
@@ -123,7 +123,7 @@ foreach($rows->result() as $data)
     $pdf->Cell(0.5,$height,'',0,0,'C');
     $pdf->Cell(1,$height,$noUrut,1,0,'C');
     $pdf->Cell(7,$height,$data->Name,1,0,'L');
-    $pdf->Cell(3,$height, bulan_tahun(format_date($data->Bulan),$data->Tahun),1,0,'C');
+    $pdf->Cell(4,$height, $data->InvoiceId,1,0,'C');
     //$pdf->Cell(2,$height,$data->Tahun,1,0,'C');
     $pdf->Cell(1,$height,'$','LTB',0,'L');
     $pdf->Cell(2.5,$height,number_format($data->InvoiceAmount, 2, ',', '.'),'TB',0,'R');
@@ -141,7 +141,7 @@ foreach($rows->result() as $data)
 $pdf->SetFont('Arial','B',9);
 $pdf->Ln($height);
 $pdf->Cell(0.5,$height,'',0,0,'C');
-$pdf->Cell(11,$height,'TOTAL',1,0,'C');
+$pdf->Cell(12,$height,'TOTAL',1,0,'C');
 $pdf->Cell(1,$height,'$','LTB',0,'L');
 $pdf->Cell(2.5,$height,number_format($SumInvoiceAmount, 2, ',', '.'),'TB',0,'R');
 $pdf->Cell(1,$height,'Rp.','LTB',0,'L');;
@@ -151,10 +151,10 @@ $pdf->Cell(2.5,$height,number_format($SumInvoiceAmountIdr, 0, ',', '.'),'TRB',0,
 // END LOKAL //
 
 
-$pdf->Output("Hutang Supplier Detail.pdf","I");
+$pdf->Output("Hutang Supplier Invoice.pdf","I");
 
 
 /* 
- * End of file v_hutang_supplier_detail.php
- * Location: ./views/report/hutang_supplier/v_hutang_supplier_detail.php 
+ * End of file v_hutang_supplier_invoice.php
+ * Location: ./views/report/hutang_supplier/v_hutang_supplier_invoice.php 
  */

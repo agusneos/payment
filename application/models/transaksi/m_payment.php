@@ -51,18 +51,16 @@ class M_payment extends CI_Model
             }
 	}        
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, PaymentSisa, CurrencyCode, ExchRate, Tax,
-                            IF(Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);        
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE)       
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PayDate', '0000-00-00');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, Qty, PaymentSisa, CurrencyCode, ExchRate, Tax,
-                            IF(Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF(Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
+        $this->db->select('Id, OrderAccount, InvoiceId, InvoiceDate, Qty, SalesBalance, 
+                           ExchRate, CurrencyCode, CheckDate, SalesBalance', FALSE);
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate !=', '0000-00-00 00:00:00')
                  ->where('PayDate', '0000-00-00');
@@ -85,7 +83,7 @@ class M_payment extends CI_Model
     
     function update($InvoiceId, $PayDate)
     {    
-        $this->db->where('InvoiceId', $InvoiceId);
+        $this->db->where('Id', $InvoiceId);
         return $this->db->update(self::$table,array(
             'PayDate'         => $PayDate
         ));
@@ -93,6 +91,7 @@ class M_payment extends CI_Model
     
     function createVoucher()
     {
+        $Id                 = $this->input->post('Id',true);
         $CurrencyCode       = $this->input->post('CurrencyCode',true);
         $PayNum             = $this->input->post('PaymentNumber',true);
         $Nt                 = $this->input->post('Note',true);
@@ -140,6 +139,7 @@ class M_payment extends CI_Model
         }
         
         return $this->db->insert(self::$voucher,array(
+            'VendInvoiceJour_id'=> $Id,
             'OrderAccount'      => $this->input->post('OrderAccount',true),
             'PaymentNumber'     => $PaymentNumber,
             'PaymentDate'       => $this->input->post('PaymentDate',true),
@@ -151,23 +151,74 @@ class M_payment extends CI_Model
         ));
     }
     
-    /*
-    function createVoucherInvoice()
-    {
-        return $this->db->insert(self::$voucher,array(
-            'OrderAccount'      =>  $this->input->post('OrderAccount',true),
-            'PaymentNumber'     =>  $this->input->post('PaymentNumber',true),
-            'PaymentDate'       =>  $this->input->post('PaymentDate',true),
-            'CurrencyCode'      =>  $this->input->post('CurrencyCode',true),
-            'ExchRate'          =>  $this->input->post('ExchRate',true),
-            'InvoiceAmount'     =>  $this->input->post('InvoiceAmount',true),
-            'InvoiceAmountMST'  =>  $this->input->post('InvoiceAmountMST',true),
-            'PaymentCreateDate' =>  $this->input->post('PaymentCreateDate',true),
-        ));
+    function split($id, $sum, $sisa){
+        $this->db->where('Id', $id);
+        $query  = $this->db->get(self::$table);
+        $rowa = $query->row();
+        if($rowa){
+            if($rowa->CurrencyCode == 'IDR'){
+                $KreditUSD = 0;
+                $KreditIDR = $sum;
+                $KreditUSD_sisa = 0;
+                $KreditIDR_sisa = $sisa;
+            }
+            else{
+                $KreditUSD = $sum;
+                $KreditIDR = round($sum*$rowa->ExchRate, 0);
+                $KreditUSD_sisa = $sisa;
+                $KreditIDR_sisa = round($sisa*$rowa->ExchRate, 0);
+            }
+            $querya = $this->db->insert(self::$table,array(     // Create Invoice Sisa Pecah
+                'OrderAccount'  => $rowa->OrderAccount,
+                'InvoiceId'     => $rowa->InvoiceId,
+                'InvoiceDate'   => $rowa->InvoiceDate,
+                'Qty'           => $rowa->Qty,
+                'SalesBalance'  => $sisa,
+                'CurrencyCode'  => $rowa->CurrencyCode,
+                'ExchRate'      => $rowa->ExchRate,
+                'CheckDate'     => $rowa->CheckDate
+            ));
+            $this->db->where('Id', $id);
+            $queryb = $this->db->update(self::$table,array(     // Update Invoice Pecah
+                'SalesBalance'  => $sum
+            ));
+            $this->db->where('VendInvoiceJour_Id', $id);
+            $queryc = $this->db->update(self::$voucher,array(     // Update Voucher Sisa Pecah
+                'KreditUSD'             => $KreditUSD,
+                'KreditIDR'             => $KreditIDR
+            ));
+            $this->db->where('InvoiceId', $rowa->InvoiceId);
+            $this->db->order_by('Id', 'desc');
+            $this->db->limit(1);
+            $query_b  = $this->db->get(self::$table);
+            $row_b = $query_b->row();
+            $queryd = $this->db->insert(self::$voucher,array(     // Create Voucher Sisa Pecah
+                'VendInvoiceJour_id'    => $row_b->Id,
+                'OrderAccount'          => $rowa->OrderAccount,
+                'PaymentNumber'         => $rowa->InvoiceId,
+                'PaymentDate'           => $rowa->InvoiceDate,
+                'KreditUSD'             => $KreditUSD_sisa,
+                'KreditIDR'             => $KreditIDR_sisa
+            ));
+            if($querya && $queryb && $queryc && $queryd){
+                return json_encode(array('success'=>true));
+            }
+            else{
+                return json_encode(array('success'=>false,'error'=>$this->db->_error_message()));
+            }
+        }
     }
-     * 
-     */
-        
+    
+    function delete($id){
+        $query_a = $this->db->delete(self::$table, array('Id' => $id)); //tabel custinvoicejour
+        $query_b = $this->db->delete(self::$voucher, array('VendInvoiceJour_Id' => $id)); //tabel voucher
+        if($query_a && $query_b){
+            return json_encode(array('success'=>true));
+        }
+        else{
+            return json_encode(array('success'=>false,'error'=>'Gagal'));
+        }
+    }
 }
 
 /* End of file m_payment.php */

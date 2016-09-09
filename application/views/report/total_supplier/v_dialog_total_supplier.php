@@ -46,7 +46,7 @@
         </div>
         <div class="fitem">
             <label for="type">Tahun</label>
-            <input id="tahun3" name="tahun3" class="easyui-numberspinner" value="2014" data-options="increment:1,required:true"style="width:100px;" />
+            <input id="tahun3" name="tahun3" class="easyui-numberspinner" style="width:100px;" />
         </div>
     </form>
 
@@ -57,6 +57,17 @@
 </div>
 
 <script type="text/javascript">
+    $(function() {
+        var date = new Date();
+        var yy = date.getYear();
+        var year = (yy < 1000) ? yy + 1900 : yy;
+        
+        $('#tahun3').numberspinner({
+            value:year,
+            increment:1,
+            required: true
+        });
+    });
     function cetak_total_supplier()
     {
         var isValid = $('#fm-dialog_total_supplier').form('validate');

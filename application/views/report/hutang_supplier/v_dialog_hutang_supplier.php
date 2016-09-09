@@ -56,7 +56,8 @@
             <select id="jenis" name="jenis" class="easyui-combobox" style="width:100px;" required>
                 <option value="0"></option>
                 <option value="1">Summary</option>
-                <option value="2">Detail</option>                
+                <option value="2">Detail</option> 
+                <option value="3">Invoice</option>
             </select>
         </div>
     </form>
@@ -75,19 +76,21 @@
         {           
             var jenis   = $('#jenis').combobox('getValue');
             var tanggal = $('#tglTrans').datebox('getValue');   
-            if (jenis == 1)
-            {
+            if (jenis == 1){
                 var url     = '<?php echo site_url('report/hutang_supplier/cetak_hutang_supplier_summary'); ?>?nilai='+tanggal;
                 var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
                 var title   = 'Summary Hutang Supplier';
             }
-            else
-            {
+            else if (jenis == 2){
                 var url     = '<?php echo site_url('report/hutang_supplier/cetak_hutang_supplier_detail'); ?>?nilai='+tanggal;
                 var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
                 var title   = 'Detail Hutang Supplier';
             }
-            
+            else{
+                var url     = '<?php echo site_url('report/hutang_supplier/cetak_hutang_supplier_invoice'); ?>?nilai='+tanggal;
+                var content = '<iframe scrolling="auto" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+                var title   = 'Detail Invoice Hutang Supplier';
+            }
             
             if ($('#tt').tabs('exists', title))
             {

@@ -14,7 +14,7 @@ class M_dashboard extends CI_Model
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
         $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
-        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceDate';
+        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'AcceptDate';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
         
         $filterRules = isset($_POST['filterRules']) ? ($_POST['filterRules']) : '';
@@ -51,24 +51,22 @@ class M_dashboard extends CI_Model
             }
 	}
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY) AS JatuhTempo, Qty, PaymentSisa, CurrencyCode, 
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(AcceptDate,INTERVAL PayTerm DAY) AS JatuhTempo, 
+                           Qty, CurrencyCode, SalesBalance, AcceptDate', FALSE);
         $this->db->where($cond, NULL, FALSE)
                  ->where('CheckDate <> "0000-00-00 00:00:00"')
-                 ->where('PaymentSisa <> 0')
-                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY)) <= 0 ');
+                 ->where('PayDate = "0000-00-00"')
+                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(AcceptDate,INTERVAL PayTerm DAY)) <= 0 ');
         $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
 
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY) AS JatuhTempo, Qty, PaymentSisa, CurrencyCode,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(AcceptDate,INTERVAL PayTerm DAY) AS JatuhTempo, 
+                           Qty, CurrencyCode, SalesBalance, AcceptDate', FALSE);
         $this->db->where($cond, NULL, FALSE)
-                ->where('CheckDate <> "0000-00-00 00:00:00"')
-                 ->where('PaymentSisa <> 0')
-                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY)) <= 0');
+                 ->where('CheckDate <> "0000-00-00 00:00:00"')
+                 ->where('PayDate = "0000-00-00"')
+                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(AcceptDate,INTERVAL PayTerm DAY)) <= 0');
         $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);
@@ -93,7 +91,7 @@ class M_dashboard extends CI_Model
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
         $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
         $offset = ($page-1)*$rows;      
-        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceDate';
+        $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'AcceptDate';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';
         
         $filterRules = isset($_POST['filterRules']) ? ($_POST['filterRules']) : '';
@@ -130,24 +128,22 @@ class M_dashboard extends CI_Model
             }
 	}
         
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY) AS JatuhTempo, Qty, PaymentSisa, CurrencyCode, 
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(AcceptDate,INTERVAL PayTerm DAY) AS JatuhTempo, 
+                           Qty, CurrencyCode, SalesBalance, AcceptDate', FALSE);
         $this->db->where($cond, NULL, FALSE)
-                ->where('CheckDate <> "0000-00-00 00:00:00"')
-                 ->where('PaymentSisa <> 0')
-                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY)) < 7');
+                 ->where('CheckDate <> "0000-00-00 00:00:00"')
+                 ->where('PayDate = "0000-00-00"')
+                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(AcceptDate,INTERVAL PayTerm DAY)) < 7 ');
         $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->from(self::$table);
         $total  = $this->db->count_all_results();
 
-        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY) AS JatuhTempo, Qty, PaymentSisa, CurrencyCode,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 0.1, "") AS Ppn,
-                            IF('.self::$table.'.Tax = "PPN", PaymentSisa * 1.1, PaymentSisa) AS InvoiceAmount', FALSE);
+        $this->db->select('OrderAccount, InvoiceId, InvoiceDate, DATE_ADD(AcceptDate,INTERVAL PayTerm DAY) AS JatuhTempo, 
+                           Qty, CurrencyCode, SalesBalance, AcceptDate', FALSE);
         $this->db->where($cond, NULL, FALSE)
-                ->where('CheckDate <> "0000-00-00 00:00:00"')
-                 ->where('PaymentSisa <> 0')
-                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(InvoiceDate,INTERVAL PayTerm DAY)) < 7');
+                 ->where('CheckDate <> "0000-00-00 00:00:00"')
+                 ->where('PayDate = "0000-00-00"')
+                 ->where('TIMESTAMPDIFF(DAY,now(),DATE_ADD(AcceptDate,INTERVAL PayTerm DAY)) < 7 ');
         $this->db->join(self::$vendor, self::$table.'.OrderAccount='.self::$vendor.'.Id', 'left');
         $this->db->order_by($sort, $order);
         $this->db->limit($rows, $offset);

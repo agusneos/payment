@@ -41,6 +41,17 @@ class Hutang_supplier extends CI_Controller {
         $this->load->view('report/hutang_supplier/v_hutang_supplier_detail.php',$data);
     }
     
+    function cetak_hutang_supplier_invoice()
+    {
+        $auth   = new Auth();
+        $auth->restrict();
+        
+        //$auth->cek_menu(14);
+        
+        define('FPDF_FONTPATH',$this->config->item('fonts_path'));
+        $data = $this->record->cetak_hutang_supplier_invoice($_GET['nilai']);
+        $this->load->view('report/hutang_supplier/v_hutang_supplier_invoice.php',$data);
+    }
 }
 
 /*
