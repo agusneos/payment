@@ -45,8 +45,8 @@ class Invoice extends CI_Controller {
         {
             $tgl_asli = str_replace('/', '-', $worksheet[$i]['C']);
             $exp_tgl_asli = explode('-', $tgl_asli);  
-            $exp_tahun = explode(' ', $exp_tgl_asli[2]);
-            $tgl_sql = $exp_tahun[0].'-'.$exp_tgl_asli[0].'-'.$exp_tgl_asli[1]; // pERUBAHAN FORMAT TANGGAL KE MYSQL
+            //$exp_tahun = explode(' ', isset($exp_tgl_asli[2]));
+            $tgl_sql = $exp_tgl_asli[2].'-'.$exp_tgl_asli[0].'-'.$exp_tgl_asli[1]; // pERUBAHAN FORMAT TANGGAL KE MYSQL
 
             $OrderAccount        = $worksheet[$i]['A'];
             $InvoiceId           = $worksheet[$i]['B'];

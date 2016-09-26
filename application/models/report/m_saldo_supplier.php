@@ -62,7 +62,7 @@ class M_saldo_supplier extends CI_Model
                     LEFT JOIN '.static::$vendor.'
                         ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND PaymentDate < "'.$from.'"
-                    ORDER BY PaymentDate ASC, PaymentNumber ASC, Note ASC;');  //query Mendapatkan Saldo Awal
+                    ORDER BY PaymentDate ASC, Voucher_Id ASC, PaymentNumber ASC, Note ASC;');  //query Mendapatkan Saldo Awal
   
         $detail = $this->db->query('SELECT Name, PaymentDate, PaymentNumber, Note,
                     DebetUSD, DebetIDR, KreditUSD, KreditIDR, 
@@ -71,7 +71,7 @@ class M_saldo_supplier extends CI_Model
                     LEFT JOIN '.static::$vendor.'
                         ON '.static::$voucher.'.OrderAccount = '.static::$vendor.'.Id
                     WHERE OrderAccount = "'.$vendor.'" AND PaymentDate BETWEEN "'.$from.'" AND "'.$to.'"
-                    ORDER BY PaymentDate ASC, PaymentNumber ASC, Note ASC;');
+                    ORDER BY PaymentDate ASC, Voucher_Id ASC, PaymentNumber ASC, Note ASC;');
         
         $tgl = $this->db->query('SELECT "'.$from.'" as Dari ,"'.$to.'" as Sampai');
         

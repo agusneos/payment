@@ -176,7 +176,8 @@ class M_payment extends CI_Model
                 'SalesBalance'  => $sisa,
                 'CurrencyCode'  => $rowa->CurrencyCode,
                 'ExchRate'      => $rowa->ExchRate,
-                'CheckDate'     => $rowa->CheckDate
+                'CheckDate'     => $rowa->CheckDate,
+				'AcceptDate'     => $rowa->AcceptDate
             ));
             $this->db->where('Id', $id);
             $queryb = $this->db->update(self::$table,array(     // Update Invoice Pecah

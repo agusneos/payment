@@ -96,7 +96,7 @@ class M_invoice extends CI_Model
             }
             else{
                 if($rowa->Tax == 'PPN'){
-                    $SalesBalance = $SalesBalance*1.1;
+                    $SalesBalance = round($SalesBalance*1.1, 0);
                 }
                 $querya = $this->db->insert(self::$table,array(
                     'OrderAccount'  => $OrderAccount,

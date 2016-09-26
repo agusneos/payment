@@ -13,7 +13,7 @@ class M_check extends CI_Model
     function index()
     {
         $page   = isset($_POST['page']) ? intval($_POST['page']) : 1;
-        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 100;
+        $rows   = isset($_POST['rows']) ? intval($_POST['rows']) : 300;
         $offset = ($page-1)*$rows;      
         $sort   = isset($_POST['sort']) ? strval($_POST['sort']) : 'InvoiceId';
         $order  = isset($_POST['order']) ? strval($_POST['order']) : 'asc';

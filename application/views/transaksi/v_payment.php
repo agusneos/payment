@@ -46,15 +46,26 @@
             $.messager.alert('Info','Data Belum Dipilih !','info');
         }
         else {
-            $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
-            $('#fm-paid').form('reset');
-            var InvoiceAmountSum = 0;
+            var cc = [];
             for(var i=0; i<rows.length; i++){
-                var row = rows[i];
-                InvoiceAmountSum    = eval(InvoiceAmountSum)+eval(row.SalesBalance);               
+                    var currency = rows[i]['CurrencyCode'];
+                    if ($.inArray(currency, cc) == -1){	// not found
+                            cc.push(currency);
+                    }
             }
-            $('#InvoiceAmountSum').numberbox('setValue',InvoiceAmountSum);
-            $('#InvoiceAmountSum').numberbox({disabled: true});
+            if (cc.length > 1){
+                    $.messager.alert('Info','Currency Berbeda !','info');
+            } else {
+                $('#dlg-paid').dialog({modal: true}).dialog('open').dialog('setTitle','Posting Payment');
+                $('#fm-paid').form('reset');
+                var InvoiceAmountSum = 0;
+                for(var i=0; i<rows.length; i++){
+                    var row = rows[i];
+                    InvoiceAmountSum    = eval(InvoiceAmountSum)+eval(row.SalesBalance);               
+                }
+                $('#InvoiceAmountSum').numberbox('setValue',InvoiceAmountSum);
+                $('#InvoiceAmountSum').numberbox({disabled: true});
+            }
         }
     }
     
