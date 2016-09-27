@@ -14,7 +14,7 @@ class M_hutang_supplier extends CI_Model
     {       
         $sql        = 'SELECT Name,
                         SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
-                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                        SUM(ROUND(SalesBalance * ExchRate,0)) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
@@ -42,7 +42,7 @@ class M_hutang_supplier extends CI_Model
         $sql        = 'SELECT Name, MONTH(AcceptDate) AS Bulan,
                         YEAR(AcceptDate) AS Tahun,
                         SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
-                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                        SUM(ROUND(SalesBalance * ExchRate,0)) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
@@ -70,7 +70,7 @@ class M_hutang_supplier extends CI_Model
     {       
         $sql        = 'SELECT Name, InvoiceId,
                         SUM(IF(CurrencyCode = "IDR","",SalesBalance)) AS InvoiceAmount,
-                        SUM(SalesBalance * ExchRate) AS InvoiceAmountIdr
+                        SUM(ROUND(SalesBalance * ExchRate,0)) AS InvoiceAmountIdr
                        
                        FROM '.self::$table1.'
                 
