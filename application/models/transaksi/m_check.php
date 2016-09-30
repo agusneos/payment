@@ -123,8 +123,19 @@ class M_check extends CI_Model
                 $KreditUSD      = round($InvoiceAmount, 2);
                 $KreditIDR      = $KreditUSD * $ExchRate;                
             }
+            return $this->db->insert(self::$voucher,array(
+                'VendInvoiceJour_Id'    => $Id,
+                'OrderAccount'          => $OrderAccount,
+                'PaymentDate'           => $PaymentDate,
+                'PaymentNumber'         => $PaymentNumber,
+                'Note'                  => $Note,
+                'DebetUSD'              => round($DebetUSD, 2),
+                'DebetIDR'              => round($DebetIDR, 0),
+                'KreditUSD'             => round($KreditUSD, 2),
+                'KreditIDR'             => round($KreditIDR, 0)
+            ));
         }
-        else
+ /*       else
         {
             if ( $CurrencyCode == 'IDR')
             {
@@ -143,19 +154,9 @@ class M_check extends CI_Model
                 $DebetUSD       = round($InvoiceAmount, 2) * -1;
                 $DebetIDR       = $DebetUSD * $ExchRate;                
             }
-        }
+        }   */
                
-        return $this->db->insert(self::$voucher,array(
-            'VendInvoiceJour_Id'    => $Id,
-            'OrderAccount'          => $OrderAccount,
-            'PaymentDate'           => $PaymentDate,
-            'PaymentNumber'         => $PaymentNumber,
-            'Note'                  => $Note,
-            'DebetUSD'              => round($DebetUSD, 2),
-            'DebetIDR'              => round($DebetIDR, 0),
-            'KreditUSD'             => round($KreditUSD, 2),
-            'KreditIDR'             => round($KreditIDR, 0)
-        ));
+        
     }
     
 }
