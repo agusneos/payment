@@ -258,14 +258,14 @@ $config['encryption_key'] = 'H3yTh1sIs@n3ncrYPt10nK3y!Py';
 |
 */
 $config['sess_cookie_name']			= 'ci_session';
-$config['sess_expiration']				= 7200;
+$config['sess_expiration']				= 0;
 $config['sess_expire_on_close']		= TRUE;
 $config['sess_encrypt_cookie']		= TRUE;     // Def. FALSE
 $config['sess_use_database']			= TRUE;     // Def. FALSE
 $config['sess_table_name']      		= 's_ci_sessions';
 $config['sess_match_ip']				= TRUE;     // Def. FALSE
 $config['sess_match_useragent']	= TRUE;
-$config['sess_time_to_update']		= 60;       	// Def. 300
+$config['sess_time_to_update']		= 300;       	// Def. 300
 
 /*
 |--------------------------------------------------------------------------

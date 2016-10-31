@@ -89,6 +89,14 @@ class Vendor extends CI_Controller {
         
         echo $this->record->enumField('Tax');
     }
+    
+    function enumRound()
+    {
+        $auth   = new Auth();
+        $auth->restrict();
+        
+        echo $this->record->enumField('Round');
+    }
                 
 }
 

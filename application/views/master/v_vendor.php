@@ -11,6 +11,7 @@
             <th data-options="field:'PayTerm'"              width="100" align="center" sortable="true" formatter="payterm">Payment Term</th>
             <th data-options="field:'VendGroup'"            width="100" align="center" sortable="true" >Grup</th>
             <th data-options="field:'Tax'"                  width="100" align="center" sortable="true" >Pajak</th>
+            <th data-options="field:'Round'"                width="100" align="center" sortable="true" >Pembulatan</th>
         </tr>
     </thead>
 </table>
@@ -196,6 +197,12 @@
                 url:'<?php echo site_url('master/vendor/enumTax'); ?>',
                 method:'get', valueField:'data', textField:'data', panelHeight:'auto'" required="true"/>
         </div>
+        <div class="fitem">
+            <label for="type">Pembulatan</label>
+            <input id="Round" name="Round" class="easyui-combobox"  data-options="
+                url:'<?php echo site_url('master/vendor/enumRound'); ?>',
+                method:'get', valueField:'data', textField:'data', panelHeight:'auto'" required="true"/>
+        </div>
     </form>
 </div>
 
@@ -225,6 +232,12 @@
             <label for="type">Pajak</label>
             <input id="Tax" name="Tax" class="easyui-combobox"  data-options="
                 url:'<?php echo site_url('master/vendor/enumTax'); ?>',
+                method:'get', valueField:'data', textField:'data', panelHeight:'auto'" required="true"/>
+        </div>
+        <div class="fitem">
+            <label for="type">Pembulatan</label>
+            <input id="Round" name="Round" class="easyui-combobox"  data-options="
+                url:'<?php echo site_url('master/vendor/enumRound'); ?>',
                 method:'get', valueField:'data', textField:'data', panelHeight:'auto'" required="true"/>
         </div>
     </form>

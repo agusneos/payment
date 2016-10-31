@@ -80,7 +80,8 @@ class M_vendor extends CI_Model
             'Name'=>$this->input->post('Name',true),
             'PayTerm'=>$this->input->post('PayTerm',true),
             'VendGroup'=>$this->input->post('VendGroup',true),
-            'Tax'=>$this->input->post('Tax',true)            
+            'Tax'=>$this->input->post('Tax',true),
+            'Round'=>$this->input->post('Round',true)
         ));
     }
     
@@ -91,7 +92,8 @@ class M_vendor extends CI_Model
             'Name'=>$this->input->post('Name',true),
             'PayTerm'=>$this->input->post('PayTerm',true),
             'VendGroup'=>$this->input->post('VendGroup',true),
-            'Tax'=>$this->input->post('Tax',true) 
+            'Tax'=>$this->input->post('Tax',true),
+            'Round'=>$this->input->post('Round',true)
         ));
     }
     

@@ -30,8 +30,8 @@
                             title:title,                    
                             href:url,
                             closable:true,
-                            iconCls:iconCls,
-                        })
+                            iconCls:iconCls
+                        });
                     }
                 }
             }

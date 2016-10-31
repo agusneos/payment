@@ -81,7 +81,7 @@ class M_invoice extends CI_Model
     function upload($OrderAccount, $InvoiceId, $InvoiceDate, $Qty,
                     $SalesBalance, $CurrencyCode, $ExchRate)
     {
-        $this->db->select('Tax');
+        $this->db->select('Tax, Round');
         $this->db->where('Id', $OrderAccount);
         $query  = $this->db->get(self::$vendor);
         $rowa = $query->row();
@@ -96,7 +96,15 @@ class M_invoice extends CI_Model
             }
             else{
                 if($rowa->Tax == 'PPN'){
-                    $SalesBalance = round($SalesBalance*1.1, 0);
+                    if($rowa->Round == 'UP'){
+                        $SalesBalance = ceil($SalesBalance*1.1);
+                    }
+                    elseif ($rowa->Round == 'NORMAL') {
+                        $SalesBalance = round($SalesBalance*1.1, 0);
+                    }
+                    else{
+                        $SalesBalance = floor($SalesBalance*1.1);
+                    }
                 }
                 $querya = $this->db->insert(self::$table,array(
                     'OrderAccount'  => $OrderAccount,
